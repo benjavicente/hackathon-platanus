@@ -19,12 +19,15 @@ function RouteComponent() {
   });
 
   return (
-    <button
-      onClick={() =>
-        createLessonMutation.mutate({ parentContextDescription: "Quiero aprender a como sumar", name: "sumar" })
-      }
-    >
-      Crear lección
-    </button>
+    <div>
+      <button
+        onClick={() =>
+          createLessonMutation.mutate({ parentContextDescription: "Quiero aprender a como sumar", name: "sumar" })
+        }
+      >
+        Crear lección
+      </button>
+      <h1>hola</h1>
+    </div>
   );
 }
