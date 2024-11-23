@@ -1,4 +1,5 @@
 import { httpAction } from "./_generated/server";
+
 import { internal } from "./_generated/api";
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
@@ -16,5 +17,12 @@ export const getMath = httpAction(async (ctx, request) => {
       "Access-Control-Allow-Origin": "*",
       Vary: "origin",
     },
+  });
+});
+
+export const createMath = httpAction(async (ctx, request) => {
+  const model = getModel();
+  const result = streamText({
+    model: model,
   });
 });

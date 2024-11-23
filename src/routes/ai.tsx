@@ -9,7 +9,7 @@ export const Route = createFileRoute("/ai")({
 });
 
 function RouteComponent() {
-  const callAI = useConvexAction(api.ai.generateLessonPlan);
+  const callAI = useConvexAction(api.ai.generateLessonPlanTest);
 
   const callAIMutation = useMutation({
     mutationFn: callAI,
@@ -20,8 +20,7 @@ function RouteComponent() {
       <button
         onClick={() =>
           callAIMutation.mutate({
-            parentDescription:
-              "my kids loves math but is having a hard time with fractions",
+            parentDescription: "my kids loves math but is having a hard time with fractions",
           })
         }
       >

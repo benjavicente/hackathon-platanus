@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 const commonLessonStepSchema = {
   lessonId: v.id("lessons"),
+  contextId: v.optional(v.id("lessonStepContext")),
   previousStep: v.optional(v.id("lessonSteps")),
   scheduledCreateId: v.optional(v.id("_scheduled_functions")),
 };
@@ -17,16 +18,37 @@ const lessonStepSchema = v.union(
   }),
 );
 
+export const lessonStepContextSchema = v.union(
+  v.object({
+    type: v.literal("exercise"),
+    questions: v.array(
+      v.union(
+        v.object({
+          type: v.literal("choice"),
+          question: v.string(),
+          options: v.array(v.string()),
+          correctOption: v.number(),
+        }),
+      ),
+    ),
+  }),
+  v.object({
+    type: v.literal("explanation"),
+    prompt: v.string(),
+  }),
+);
+
 const schema = defineSchema({
   lessons: defineTable({
-    lessonGoalDescription: v.string(),
+    name: v.string(),
+    lessonGoalDescription: v.optional(v.string()),
+    createScheduledId: v.optional(v.id("_scheduled_functions")),
+    ready: v.boolean(),
     stepGoalId: v.optional(v.id("lessonSteps")),
     currentStepId: v.optional(v.id("lessonSteps")),
   }),
   lessonSteps: defineTable(lessonStepSchema),
-  lessonStepsBuilder: defineTable({
-    // ...
-  }),
+  lessonStepContext: defineTable(lessonStepContextSchema),
   lessonStepsState: defineTable({
     // ...
   }),

@@ -11,18 +11,20 @@ export const Route = createFileRoute("/papas/$lessonId")({
 
 function RouteComponent() {
   const { lessonId } = Route.useParams();
-  const { data: lesson } = useSuspenseQuery(
-    convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }),
-  );
+  const { data: lesson } = useSuspenseQuery(convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }));
 
   return (
     <>
-      <h1>{lesson.name}</h1>
+      <h1>
+        {lesson.name} - {lesson.createScheduled.state.kind}
+      </h1>
+      <p>{lesson.lessonGoalDescription}</p>
       <ul>
         {lesson.steps.map((step, i) => (
           <li key={step._id}>
             <h2>Paso {i}</h2>
-            <h2>{step.scheduledCreate?.state.kind}</h2>
+            <div>{step.scheduledCreate?.state.kind}</div>
+            {step.context ? <div>{JSON.stringify(step.context)}</div> : null}
           </li>
         ))}
       </ul>

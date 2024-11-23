@@ -12,14 +12,10 @@ function RouteComponent() {
 
   return (
     <>
+      <h1>Tus lecciones</h1>
       {lessons.map((lesson) => (
-        <Link
-          key={lesson._id}
-          from={Route.fullPath}
-          to="./$lessonId"
-          params={{ lessonId: lesson._id }}
-        >
-          {lesson.name}
+        <Link key={lesson._id} from={Route.fullPath} to="./$lessonId" params={{ lessonId: lesson._id }}>
+          {lesson.lessonGoalDescription}
         </Link>
       ))}
     </>

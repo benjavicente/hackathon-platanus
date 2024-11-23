@@ -11,25 +11,13 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   const { data: lessons } = useSuspenseQuery(convexQuery(api.lessons.list, {}));
 
-  const deleteLesson = useConvexMutation(api.lessons.delete);
-
-  const deleteLessonMutation = useMutation({
-    mutationFn: deleteLesson,
-  });
-
   return (
     <div className="p-2">
       <h3>Lecciones que tienes</h3>
       {lessons.map((lesson) => (
         <div key={lesson._id} className="p-2 border-b">
-          <div>{lesson.name}</div>
-          <div>
-            <button
-              onClick={() => deleteLessonMutation.mutate({ id: lesson._id })}
-            >
-              Eliminar
-            </button>
-          </div>
+          <div>{lesson.lessonGoalDescription}</div>
+
           <Link
             from={Route.fullPath}
             to="./lecciones/$lessonId"

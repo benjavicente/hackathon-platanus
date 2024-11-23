@@ -1,13 +1,9 @@
-import { v } from "convex/values";
-import {
-  action,
-  internalAction,
-  mutation,
-  query,
-  QueryCtx,
-} from "./_generated/server";
+import { Infer, v } from "convex/values";
+import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id, Doc } from "./_generated/dataModel";
+import { generateExercise, generateExplanation, generateLessonPlan } from "./ai";
+import { lessonStepContextSchema } from "./schema";
 
 export const list = query({
   handler: async (ctx) => {
@@ -18,68 +14,103 @@ export const list = query({
 export const create = mutation({
   args: {
     name: v.string(),
+    parentContextDescription: v.string(),
   },
-  handler: async (ctx, { name }) => {
-    const lessonId = await ctx.db.insert("lessons", { name });
-    const createScheduledId = await ctx.scheduler.runAfter(
-      internal.lessons.createSteps,
-      0,
-      {},
-    );
+  handler: async (ctx, { name, parentContextDescription }) => {
+    const lessonId = await ctx.db.insert("lessons", {
+      name: name,
+      ready: false,
+    });
+    const createScheduledId = await ctx.scheduler.runAfter(0, internal.lessons.buildLessonWithAI, {
+      lessonId,
+      parentContextDescription,
+    });
     await ctx.db.patch(lessonId, { createScheduledId });
-
-    //
-    const step1 = await ctx.db.insert("lessonSteps", {
-      type: "explanation",
-      lessonId,
-    });
-    const scheduled1 = await ctx.scheduler.runAfter(
-      0,
-      internal.lessons.createStep,
-      {
-        stepId: step1,
-      },
-    );
-    ctx.db.patch(step1, { scheduledCreateId: scheduled1 });
-
-    const step2 = await ctx.db.insert("lessonSteps", {
-      type: "explanation",
-      lessonId,
-      previousStep: step1,
-    });
-    const scheduled2 = await ctx.scheduler.runAfter(
-      0,
-      internal.lessons.createStep,
-      {
-        stepId: step2,
-      },
-    );
-    ctx.db.patch(step2, { scheduledCreateId: scheduled2 });
-
-    const step3 = await ctx.db.insert("lessonSteps", {
-      type: "explanation",
-      lessonId,
-      previousStep: step2,
-    });
-    const scheduled3 = await ctx.scheduler.runAfter(
-      0,
-      internal.lessons.createStep,
-      {
-        stepId: step3,
-      },
-    );
-    ctx.db.patch(step3, { scheduledCreateId: scheduled3 });
-
-    await ctx.db.patch(lessonId, { stepGoalId: step3, currentStepId: step1 });
 
     return { lessonId };
   },
 });
 
-export const createStep = internalAction({
-  handler: async (ctx, { stepId }) => {
-    const randomInt = Math.floor(Math.random() * 10);
-    await new Promise((resolve) => setTimeout(resolve, randomInt * 1000));
+export const buildLessonWithAI = internalAction({
+  args: { lessonId: v.id("lessons"), parentContextDescription: v.string() },
+  handler: async (ctx, { lessonId, parentContextDescription }) => {
+    // Por hacer: Hacer algo con la ia para generar el plan
+
+    const plan = await generateLessonPlan({ parentContextDescription });
+
+    // TODO: actualizar la lección con la descripción
+    await ctx.runMutation(internal.lessons.createSteps, {
+      lessonId,
+      lessonGoal: plan.lessonGoalDescription,
+      steps: plan.lessonSteps,
+    });
+  },
+});
+
+export const createSteps = internalMutation({
+  args: {
+    lessonId: v.id("lessons"),
+    lessonGoal: v.string(),
+    steps: v.array(
+      v.object({
+        stepPrompt: v.string(),
+        stepDescription: v.string(),
+        stepType: v.union(v.literal("explanation"), v.literal("exercise")),
+      }),
+    ),
+  },
+  handler: async (ctx, { lessonId, steps, lessonGoal }) => {
+    await ctx.db.patch(lessonId, { lessonGoalDescription: lessonGoal });
+
+    const stepsIds = [];
+    for (const stepParams of steps) {
+      const stepId = await ctx.db.insert("lessonSteps", {
+        type: "exercise",
+        lessonId,
+      });
+      const scheduled = await ctx.scheduler.runAfter(0, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
+      await ctx.db.patch(stepId, { scheduledCreateId: scheduled });
+      stepsIds.push(stepId);
+    }
+
+    await ctx.db.patch(lessonId, {
+      stepGoalId: stepsIds[stepsIds.length - 1],
+      currentStepId: stepsIds[0],
+    });
+  },
+});
+
+export const buildStepWithAI = internalAction({
+  args: {
+    stepPrompt: v.string(),
+    stepDescription: v.string(),
+    stepType: v.union(v.literal("explanation"), v.literal("exercise")),
+    stepId: v.id("lessonSteps"),
+  },
+  handler: async (ctx, { stepId, stepPrompt, stepDescription, stepType }) => {
+    let result: Infer<typeof lessonStepContextSchema>;
+    if (stepType === "exercise") {
+      const data = await generateExercise({ stepPrompt, stepDescription });
+      result = { ...data, type: "exercise" };
+    } else if (stepType === "explanation") {
+      const data = await generateExplanation({ stepPrompt, stepDescription });
+      result = { ...data, type: "explanation" };
+    } else {
+      throw new Error("Invalid step type");
+    }
+
+    await ctx.scheduler.runAfter(0, internal.lessons.saveStep, { stepId, result });
+  },
+});
+
+export const saveStep = internalMutation({
+  args: {
+    stepId: v.id("lessonSteps"),
+    result: lessonStepContextSchema,
+  },
+  handler: async (ctx, { stepId, result }) => {
+    const contextId = await ctx.db.insert("lessonStepContext", result);
+    await ctx.db.patch(stepId, { contextId });
   },
 });
 
@@ -87,7 +118,21 @@ async function getCompleteStep(ctx: QueryCtx, step: Doc<"lessonSteps">) {
   if (!step.scheduledCreateId) throw new Error("No scheduled function");
   const scheduled = await ctx.db.system.get(step.scheduledCreateId);
   if (!scheduled) throw new Error("Scheduled function not found");
-  return { ...step, scheduledCreate: scheduled };
+
+  if (step.contextId) {
+    const context = await ctx.db.get(step.contextId);
+    if (context) {
+      return { ...step, scheduledCreate: scheduled, context };
+    }
+  }
+  return { ...step, scheduledCreate: scheduled, context: undefined };
+}
+
+async function getCompleteLesson(ctx: QueryCtx, lesson: Doc<"lessons">) {
+  if (!lesson.createScheduledId) throw new Error("No scheduled function");
+  const scheduled = await ctx.db.system.get(lesson.createScheduledId);
+  if (!scheduled) throw new Error("Scheduled function not found");
+  return { ...lesson, createScheduled: scheduled };
 }
 
 export const get = query({
@@ -97,7 +142,10 @@ export const get = query({
   handler: async (ctx, { id }) => {
     const lesson = await ctx.db.get(id);
     if (!lesson) throw new Error("Lesson not found");
-    if (!lesson.stepGoalId) throw new Error("Lesson has no steps");
+
+    const completeLesson = await getCompleteLesson(ctx, lesson);
+    if (!lesson.stepGoalId) return { ...completeLesson, steps: [] };
+
     let currentLessonState = await ctx.db.get(lesson.stepGoalId);
     if (!currentLessonState) throw new Error("Lesson step not found");
 
@@ -109,16 +157,6 @@ export const get = query({
       steps.push(await getCompleteStep(ctx, currentLessonState));
     }
 
-    return { ...lesson, steps: steps.reverse() };
+    return { ...completeLesson, steps: steps.reverse() };
   },
 });
-
-const _delete = mutation({
-  args: {
-    id: v.id("lessons"),
-  },
-  handler: async (ctx, { id }) => {
-    return ctx.db.delete(id);
-  },
-});
-export { _delete as delete };

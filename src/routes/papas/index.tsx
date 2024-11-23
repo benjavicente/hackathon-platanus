@@ -17,8 +17,13 @@ function RouteComponent() {
       await navigate({ to: "$lessonId", params: { lessonId } });
     },
   });
+
   return (
-    <button onClick={() => createLessonMutation.mutate({ name: "hola" })}>
+    <button
+      onClick={() =>
+        createLessonMutation.mutate({ parentContextDescription: "Quiero aprender a como sumar", name: "sumar" })
+      }
+    >
       Crear lección
     </button>
   );
