@@ -1,8 +1,9 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./client";
+import { convex, queryClient } from "./client";
 import { Suspense } from "react";
+import { ConvexProvider } from "convex/react";
 
 // Set up a Router instance
 const router = createRouter({
@@ -20,9 +21,11 @@ declare module "@tanstack/react-router" {
 export function App() {
   return (
     <Suspense>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <ConvexProvider client={convex}>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </ConvexProvider>
     </Suspense>
   );
 }
