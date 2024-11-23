@@ -11,7 +11,7 @@ export const getModel = () => {
     secretAccessKey: process.env.AWS_SECRET_KEY,
   });
 
-  return model("anthropic.claude-3-sonnet-20240229-v1:0");
+  return model("anthropic.claude-3-5-haiku-20241022-v1:0");
 };
 
 export const explanationSchema = z.object({
