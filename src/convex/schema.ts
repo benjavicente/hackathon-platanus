@@ -49,9 +49,16 @@ const schema = defineSchema({
   }),
   lessonSteps: defineTable(lessonStepSchema),
   lessonStepContext: defineTable(lessonStepContextSchema),
-  lessonStepsState: defineTable({
-    // ...
-  }),
+  lessonStepsState: defineTable(
+    v.union(
+      v.object({
+        type: v.literal("choice"),
+        lessonId: v.id("lessons"),
+        stepId: v.id("lessonSteps"),
+        responses: v.array(v.number()),
+      }),
+    ),
+  ).index("by_stepid", ["stepId"]),
 });
 
 export default schema;

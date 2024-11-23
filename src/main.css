@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz@9..144&family=Sniglet&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz@9..144&family=Sniglet&display=swap");
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
@@ -6,17 +6,29 @@
 :root {
   --font-display: "Sniglet", "sans-serif";
   --font-heading: "Fraunces", "serif";
-
-  --brand-color: #3903B6;
+  --brand-color: #3903b6;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: large;
-  color: var(--brand-color)
+  color: var(--brand-color);
+}
+
+@layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
 }
 
 body {
-  font-family: var(--font-display); 
+  font-family: var(--font-display);
 }

@@ -20,7 +20,7 @@ function RouteComponent() {
       <button
         onClick={() =>
           callAIMutation.mutate({
-            parentDescription: "my kids loves math but is having a hard time with fractions",
+            parentContextDescription: "my kids loves math but is having a hard time with fractions",
           })
         }
       >

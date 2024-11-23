@@ -1,8 +1,9 @@
 import { v } from "convex/values";
 import { action, ActionCtx } from "./_generated/server";
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import { generateObject, generateText } from "ai";
+import { generateObject, generateText, tool } from "ai";
 import { z } from "zod";
+import * as mathjs from "mathjs";
 
 export const getModel = () => {
   const model = createAmazonBedrock({
@@ -11,7 +12,7 @@ export const getModel = () => {
     secretAccessKey: process.env.AWS_SECRET_KEY,
   });
 
-  return model("anthropic.claude-3-sonnet-20240229-v1:0");
+  return model("anthropic.claude-3-5-haiku-20241022-v1:0");
 };
 
 export const explanationSchema = z.object({
@@ -58,7 +59,7 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
             stepDescription: z
               .string()
               .describe(
-                "Guidance on how to approach creating the content for this step, providing context and structure.",
+                "Context and detailed guidance for how to approach creating the step content, focusing on tone, style, and relevance.",
               ),
             stepType: z
               .enum(["explanation", "exercise"])
@@ -70,10 +71,9 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
     prompt: `
       Create a structured mathematics lesson based on the following description provided by a parent: ${parentContextDescription}.
 
-        The lesson should include:
-
-        1. Engaging Explanation: Provide instructions for another agent to generate a simple and fun explanation of the topic, personalized based on the child's needs and interests.
-        2. Interactive Exercises: Provide instructions for another agent to create at least three practice problems tailored to the child's level, integrating elements that match the child's interests and challenges.
+        The lesson should start with an explanation step followed by any number of steps of the following types:
+        - Explanation: Provide instructions for another agent to generate a simple and fun explanation of the topic, personalized based on the child's needs and interests.
+        - Exercises: Provide instructions for another agent to create at least three practice problems tailored to the child's level, integrating elements that match the child's interests and challenges.
 
         The output should include:
         - **lessonGoalDescription:** A clear and concise description of the overall goal of the lesson.
@@ -83,6 +83,8 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
           - **stepType:** Indicating whether the step is an "explanation" or an "exercise."
 
         Focus on ensuring the structure is clear and engaging. The stepPrompt should act as a direct command for another agent, while the stepDescription provides reasoning and guidance for creating the step effectively.
+
+        You MUST ensure content alignment, each step should build on the previous one. Do this by giving the appropriate context and guidance for each step.
       `,
   });
 
@@ -102,7 +104,7 @@ export const generateExercise = async ({
   const { object } = await generateObject({
     model: model,
     schema: exerciseSchema,
-    prompt: stepPrompt,
+    prompt: stepDescription + stepPrompt,
   });
 
   if (!object) throw Error("No object in result");
@@ -121,7 +123,7 @@ export const generateExplanation = async ({
   const { object } = await generateObject({
     model: model,
     schema: explanationSchema,
-    prompt: stepPrompt,
+    prompt: stepDescription + stepPrompt,
   });
 
   if (!object) throw Error("No object in result");

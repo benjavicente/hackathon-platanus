@@ -7,7 +7,7 @@ export const Route = createFileRoute("/hijos")({
 
 function RouteComponent() {
   return (
-    <div className="max-w-64">
+    <div className="max-w-84 px-2 mx-auto border-x h-full">
       <Outlet />
     </div>
   );

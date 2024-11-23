@@ -19,6 +19,7 @@ import type * as ejemplo from "../ejemplo.js";
 import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as math from "../math.js";
+import type * as steps from "../steps.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   lessons: typeof lessons;
   math: typeof math;
+  steps: typeof steps;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
