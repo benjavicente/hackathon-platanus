@@ -5,15 +5,19 @@ import { generateObject, generateText, tool } from "ai";
 import { z } from "zod";
 import * as mathjs from "mathjs";
 
-export const getModel = () => {
+const orchestratorModel = "us.anthropic.claude-3-5-sonnet-20241022-v2:0";
+const excerciseModel = "anthropic.claude-3-sonnet-20240229-v1:0";
+const explanationModel = "anthropic.claude-3-haiku-20240307-v1:0";
+
+export function getModel(modelString: string) {
   const model = createAmazonBedrock({
     region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
   });
 
-  return model("us.anthropic.claude-3-5-sonnet-20241022-v2:0");
-};
+  return model(modelString);
+}
 
 export const explanationSchema = z.object({
   prompt: z.string(),
@@ -42,7 +46,7 @@ export const generateLessonPlanTest = action({
 });
 
 export async function generateLessonPlan({ parentContextDescription }: { parentContextDescription: string }) {
-  const model = getModel();
+  const model = getModel(orchestratorModel);
 
   const { object } = await generateObject({
     model: model,
@@ -99,7 +103,7 @@ export const generateExercise = async ({
   stepPrompt: string;
   stepDescription: string;
 }) => {
-  const model = getModel();
+  const model = getModel(excerciseModel);
 
   const { object } = await generateObject({
     model: model,
@@ -118,7 +122,7 @@ export const generateExplanation = async ({
   stepPrompt: string;
   stepDescription: string;
 }) => {
-  const model = getModel();
+  const model = getModel(explanationModel);
 
   const { object } = await generateObject({
     model: model,

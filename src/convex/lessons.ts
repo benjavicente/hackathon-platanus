@@ -4,11 +4,7 @@ import { internal } from "./_generated/api";
 import { Id, Doc } from "./_generated/dataModel";
 import { generateExercise, generateExplanation, generateLessonPlan } from "./ai";
 import { lessonStepContextSchema } from "./schema";
-import { last } from "node_modules/@tanstack/react-router/dist/esm/utils";
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
-}
 export const list = query({
   handler: async (ctx) => {
     return ctx.db.query("lessons").collect();
@@ -25,7 +21,7 @@ export const create = mutation({
       name: name,
       ready: false,
     });
-    const createScheduledId = await ctx.scheduler.runAfter(0, internal.lessons.buildLessonWithAI, {
+    const createScheduledId = await ctx.scheduler.runAfter(5, internal.lessons.buildLessonWithAI, {
       lessonId,
       parentContextDescription,
     });
@@ -66,14 +62,15 @@ export const createSteps = internalMutation({
 
     const stepsIds = [];
     let lastStepId: Id<"lessonSteps"> | undefined = undefined;
+    let i = 0;
     for (const stepParams of steps.reverse()) {
-      await delay(5000);
       const stepId = await ctx.db.insert("lessonSteps", {
         type: stepParams.stepType,
         previousStep: lastStepId,
         lessonId,
       });
-      const scheduled = await ctx.scheduler.runAfter(0, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
+      const scheduled = await ctx.scheduler.runAfter(i, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
+      i += 1;
       await ctx.db.patch(stepId, { scheduledCreateId: scheduled });
       stepsIds.push(stepId);
       await ctx.db.insert("lessonStepsState", {
