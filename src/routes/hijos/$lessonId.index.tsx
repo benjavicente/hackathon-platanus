@@ -11,9 +11,7 @@ export const Route = createFileRoute("/hijos/$lessonId/")({
 
 function RouteComponent() {
   const { lessonId } = Route.useParams();
-  const { data: lesson } = useSuspenseQuery(
-    convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }),
-  );
+  const { data: lesson } = useSuspenseQuery(convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }));
 
-  return null;
+  return JSON.stringify(lesson);
 }

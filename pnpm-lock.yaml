@@ -32,6 +32,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.82.2
         version: 1.82.2(@tanstack/router-generator@1.81.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/zod-adapter':
+        specifier: ^1.82.2
+        version: 1.82.2(@tanstack/react-router@1.82.2(@tanstack/router-generator@1.81.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(zod@3.23.8)
       '@tanstack/zod-form-adapter':
         specifier: ^0.36.2
         version: 0.36.2(zod@3.23.8)
@@ -1291,6 +1294,13 @@ packages:
   '@tanstack/virtual-file-routes@1.81.9':
     resolution: {integrity: sha512-jV5mWJrsh3QXHpb/by6udSqwva0qK50uYHpIXvKsLaxnlbjbLfflfPjFyRWXbMtZsnzCjSUqp5pm5/p+Wpaerg==}
     engines: {node: '>=12'}
+
+  '@tanstack/zod-adapter@1.82.2':
+    resolution: {integrity: sha512-Y0sGdwjH6UewClXQAObH72OTwFXFR3qNhCGc8TKvbpNMzn7oqJYd2mqEEMZHIA910YKA/ms7CNv0aqgXXqX7dg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@tanstack/react-router': '>=1.43.2'
+      zod: ^3.23.8
 
   '@tanstack/zod-form-adapter@0.36.2':
     resolution: {integrity: sha512-6ZvrpIStwC6kEmA9xfx+Nx8l0SMOOlqzQay2bA1AsCH2PDYIYZw8BRrkQ2m0lgTWop+6LtGuholRKdpd3/OawQ==}
@@ -3516,6 +3526,11 @@ snapshots:
   '@tanstack/store@0.5.5': {}
 
   '@tanstack/virtual-file-routes@1.81.9': {}
+
+  '@tanstack/zod-adapter@1.82.2(@tanstack/react-router@1.82.2(@tanstack/router-generator@1.81.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(zod@3.23.8)':
+    dependencies:
+      '@tanstack/react-router': 1.82.2(@tanstack/router-generator@1.81.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod: 3.23.8
 
   '@tanstack/zod-form-adapter@0.36.2(zod@3.23.8)':
     dependencies:

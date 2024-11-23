@@ -6,6 +6,9 @@ import { generateExercise, generateExplanation, generateLessonPlan } from "./ai"
 import { lessonStepContextSchema } from "./schema";
 import { last } from "node_modules/@tanstack/react-router/dist/esm/utils";
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
+}
 export const list = query({
   handler: async (ctx) => {
     return ctx.db.query("lessons").collect();
@@ -79,6 +82,7 @@ export const createSteps = internalMutation({
         stepId: stepId,
       });
       lastStepId = stepId;
+      await delay(1000);
     }
 
     await ctx.db.patch(lessonId, {

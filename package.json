@@ -30,6 +30,7 @@
     "@tanstack/react-form": "^0.36.3",
     "@tanstack/react-query": "^5.61.0",
     "@tanstack/react-router": "^1.82.2",
+    "@tanstack/zod-adapter": "^1.82.2",
     "@tanstack/zod-form-adapter": "^0.36.2",
     "ai": "^4.0.3",
     "convex": "^1.17.2",
