@@ -4,6 +4,7 @@ import { v } from "convex/values";
 const schema = defineSchema({
   lessons: defineTable({
     name: v.string(),
+    author: v.optional(v.string()),
   }),
 });
 

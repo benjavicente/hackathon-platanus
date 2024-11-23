@@ -11,10 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LeccionesImport } from './routes/lecciones'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
+import { Route as LeccionesLessonIdImport } from './routes/lecciones.$lessonId'
+import { Route as FaqIdImport } from './routes/faq.$id'
 
 // Create/Update Routes
+
+const LeccionesRoute = LeccionesImport.update({
+  id: '/lecciones',
+  path: '/lecciones',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -25,6 +34,18 @@ const AboutRoute = AboutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LeccionesLessonIdRoute = LeccionesLessonIdImport.update({
+  id: '/$lessonId',
+  path: '/$lessonId',
+  getParentRoute: () => LeccionesRoute,
+} as any)
+
+const FaqIdRoute = FaqIdImport.update({
+  id: '/faq/$id',
+  path: '/faq/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,44 +67,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
+    '/lecciones': {
+      id: '/lecciones'
+      path: '/lecciones'
+      fullPath: '/lecciones'
+      preLoaderRoute: typeof LeccionesImport
+      parentRoute: typeof rootRoute
+    }
+    '/faq/$id': {
+      id: '/faq/$id'
+      path: '/faq/$id'
+      fullPath: '/faq/$id'
+      preLoaderRoute: typeof FaqIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/lecciones/$lessonId': {
+      id: '/lecciones/$lessonId'
+      path: '/$lessonId'
+      fullPath: '/lecciones/$lessonId'
+      preLoaderRoute: typeof LeccionesLessonIdImport
+      parentRoute: typeof LeccionesImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface LeccionesRouteChildren {
+  LeccionesLessonIdRoute: typeof LeccionesLessonIdRoute
+}
+
+const LeccionesRouteChildren: LeccionesRouteChildren = {
+  LeccionesLessonIdRoute: LeccionesLessonIdRoute,
+}
+
+const LeccionesRouteWithChildren = LeccionesRoute._addFileChildren(
+  LeccionesRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/lecciones': typeof LeccionesRouteWithChildren
+  '/faq/$id': typeof FaqIdRoute
+  '/lecciones/$lessonId': typeof LeccionesLessonIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/lecciones': typeof LeccionesRouteWithChildren
+  '/faq/$id': typeof FaqIdRoute
+  '/lecciones/$lessonId': typeof LeccionesLessonIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/lecciones': typeof LeccionesRouteWithChildren
+  '/faq/$id': typeof FaqIdRoute
+  '/lecciones/$lessonId': typeof LeccionesLessonIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths: '/' | '/about' | '/lecciones' | '/faq/$id' | '/lecciones/$lessonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/about' | '/lecciones' | '/faq/$id' | '/lecciones/$lessonId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/lecciones'
+    | '/faq/$id'
+    | '/lecciones/$lessonId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  LeccionesRoute: typeof LeccionesRouteWithChildren
+  FaqIdRoute: typeof FaqIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  LeccionesRoute: LeccionesRouteWithChildren,
+  FaqIdRoute: FaqIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +170,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/lecciones",
+        "/faq/$id"
       ]
     },
     "/": {
@@ -105,6 +180,19 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/lecciones": {
+      "filePath": "lecciones.tsx",
+      "children": [
+        "/lecciones/$lessonId"
+      ]
+    },
+    "/faq/$id": {
+      "filePath": "faq.$id.tsx"
+    },
+    "/lecciones/$lessonId": {
+      "filePath": "lecciones.$lessonId.tsx",
+      "parent": "/lecciones"
     }
   }
 }

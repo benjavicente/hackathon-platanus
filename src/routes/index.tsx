@@ -19,10 +19,11 @@ function HomeComponent() {
 
   return (
     <div className="p-2">
-      <h3>Lecciones disponibles</h3>
+      <h3>Lecciones que tienes</h3>
       {lessons.map((lesson) => (
         <div key={lesson._id} className="p-2 border-b">
           <div>{lesson.name}</div>
+          {lesson.author && <div>{lesson.author}</div>}
           <div>
             <button onClick={() => deleteLessonMutation.mutate({ id: lesson._id })}>Eliminar</button>
           </div>
