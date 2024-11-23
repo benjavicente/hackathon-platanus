@@ -1,0 +1,33 @@
+{
+  "name": "platanus-hack",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "dev": "vite --port=3000",
+    "build": "vite build",
+    "serve": "vite preview",
+    "start": "vite",
+    "convex": "convex",
+    "convex:dev": "convex dev"
+  },
+  "devDependencies": {
+    "@tanstack/router-devtools": "^1.82.2",
+    "@tanstack/router-plugin": "^1.81.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "vite": "^5.4.8"
+  },
+  "dependencies": {
+    "@convex-dev/react-query": "0.0.0-alpha.8",
+    "@tailwindcss/vite": "4.0.0-beta.2",
+    "@tanstack/react-query": "^5.61.0",
+    "@tanstack/react-router": "^1.82.2",
+    "convex": "^1.17.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "4.0.0-beta.2"
+  }
+}
