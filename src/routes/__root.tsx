@@ -6,7 +6,7 @@ import { api } from "../convex/_generated/api";
 
 export const Route = createRootRoute({
   loader: async () => {
-    await Promise.all([await queryClient.ensureQueryData(convexQuery(api.courses.list, {}))]);
+    await Promise.all([await queryClient.ensureQueryData(convexQuery(api.lessons.list, {}))]);
   },
   component: RootComponent,
 });
