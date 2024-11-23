@@ -67,6 +67,7 @@ export const createSteps = internalMutation({
     const stepsIds = [];
     let lastStepId: Id<"lessonSteps"> | undefined = undefined;
     for (const stepParams of steps.reverse()) {
+      await delay(5000);
       const stepId = await ctx.db.insert("lessonSteps", {
         type: stepParams.stepType,
         previousStep: lastStepId,
@@ -82,7 +83,6 @@ export const createSteps = internalMutation({
         stepId: stepId,
       });
       lastStepId = stepId;
-      await delay(1000);
     }
 
     await ctx.db.patch(lessonId, {

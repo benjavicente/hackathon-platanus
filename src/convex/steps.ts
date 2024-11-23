@@ -26,6 +26,7 @@ export const makeAnswer = mutation({
     }
 
     if (choice.index !== state.responses.length) {
+      console.log(choice.index, state.responses.length);
       throw new Error("Invalid choice: invalid index");
     }
     const newResponse = [...state.responses, choice.value];
@@ -54,11 +55,12 @@ export const get = query({
     if (context.type === "exercise") {
       return {
         questionsStates: context.questions.map((question, index) => {
+          console.log(state.responses.length, index, state.responses[index] === question.correctOption);
           return {
             type: "exercise",
             question: question.question,
             options: question.options,
-            isCorrect: state.responses.length > index ? null : state.responses[index] === question.correctOption,
+            isCorrect: index >= state.responses.length ? null : state.responses[index] === question.correctOption,
           };
         }),
       };

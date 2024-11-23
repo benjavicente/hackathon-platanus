@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/convex/_generated/api";
@@ -13,8 +13,8 @@ const lessonStepSchema = z.object({
 export const Route = createFileRoute("/hijos/$lessonId/$lessonStepId")({
   component: RouteComponent,
   validateSearch: zodValidator(lessonStepSchema),
-  parseParams: ({ lessonStepId, lessonId }) => {
-    return { lessonStepId: lessonStepId as Id<"lessonSteps">, lessonId: lessonId as Id<"lessons"> };
+  parseParams: ({ lessonStepId }) => {
+    return { lessonStepId: lessonStepId as Id<"lessonSteps"> };
   },
 });
 
@@ -24,9 +24,13 @@ function RouteComponent() {
   const { pregunta } = Route.useSearch();
   const { data: state } = useSuspenseQuery(convexQuery(api.steps.get, { stepId: lessonStepId }));
 
+  const { questionsStates } = state;
+
   const answerMutation = useConvexMutation(api.steps.makeAnswer);
   const sendAnswer = useMutation({
-    mutationFn: answerMutation,
+    mutationFn: async (valueIndex: number) => {
+      await answerMutation({ stepId: lessonStepId, choice: { index: pregunta, value: valueIndex } });
+    },
     onError: (error) => {
       console.error(error);
     },
@@ -35,24 +39,34 @@ function RouteComponent() {
     },
   });
 
+  const actualQuestion = questionsStates[pregunta];
+
   return (
     <div>
-      {JSON.stringify(state)}
-      {/* <h1>{question}</h1>
-      <div>
-        {options.map((option, index) => (
-          <button
-            key={index}
-            value={index}
-            onClick={() => {
-              sendAnswer.mutate({ type, question, answer: index });
-            }}
-          >
-            {option}
-          </button>
-        ))}
-      </div> */}
+      <h1>{actualQuestion.question}</h1>
+
+      <div className="grid grid-cols-2 gap-2">
+        {sendAnswer.isPending ? (
+          "Cargando..."
+        ) : actualQuestion.isCorrect === null ? (
+          actualQuestion.options.map((option, index) => {
+            return (
+              <div className="col-span-1">
+                <button className="bg-green-600 hover:bg-green-500 w-full" onClick={() => sendAnswer.mutate(index)}>
+                  {option}
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <div>
+            {actualQuestion.isCorrect ? <h1>Correcto</h1> : <h1>Incorrecto</h1>}
+            <Link from={Route.fullPath} search={{ pregunta: pregunta + 1 }}>
+              Siguiente
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
-  return <>hola</>;
 }
