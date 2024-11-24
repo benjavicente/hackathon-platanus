@@ -25,12 +25,8 @@ export function getModel(modelString: string) {
 }
 
 export const explanationSchema = z.object({
-  prompt: z.string().describe(`
-    Contexto que debe saber el agente sobre las preguntas que ya resolvió el estudiante.
-    En caso de que no haya resuelto preguntas aún, entonces el contexto debe ser una introducción a la lección.
-
-    `),
-  initialMessage: z.string().describe("Mensaje de saludo del chatbot"),
+  prompt: z.string().describe("Este este es el contexto para la lección"),
+  initialMessage: z.string().describe("Este es el mensaje inicial que enviará el agente"),
 });
 
 export const exerciseSchema = z.object({
@@ -70,6 +66,9 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
               .describe(
                 "Un prompt con instrucciones para que el agente genere el contenido de este step, sea tipo explanation o excercise.",
               ),
+            stepTitle: z
+              .string()
+              .describe("El título del paso. Debe ser descriptivo del contenido de este. Máximo 5 palabras."),
             stepDescription: z
               .string()
               .describe(
@@ -83,18 +82,23 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
         .describe("Los pasos de la clase."),
     }),
     prompt: `
-        Crea una lección estructurada de matemáticas basada en la siguiente descripción proporcionada por un padre: ${parentContextDescription}.
-        Ten en consideración que las lecciones están dirigidas a un estudiante de educación básica en Chile.
+        Tu eres un orquestador de contenido educativo. Tu objetivo es crear una leccion estructurada de matematicas para un niño de educacion basica en Chile
 
-        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos (debe incluir al menos 4 de tipo exercises y 1 de explanation) de los siguientes tipos:
-        - **Explanation:** Debes proporcionar un input de contexto para un chatbot que guiará una conversación sobre las preguntas que el estudiante ya contestó.
+        Uno de los padres de un niño te ha proporcionado la siguiente descripción: ${parentContextDescription}.
+
+        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos (debe incluir al menos 2 de tipo exercises y 2 de explanation) de los siguientes tipos:
+
+        - **Explanation:** Debes entregarle solamente el contexto de las preguntas anteriores (y en caso de que no hayan, entonces sobre la lección en general). El agente usará este conocimiento para responder las dudas del estudiante,
+          por lo que es muy importante que la explicación sea clara y concisa, y sobre todo que no repita preguntas anteriores o entregue más ejercicios.
+
         - **Exercise:** Debes proporcionar instrucciones para que otro agente cree problemas de práctica adaptados al nivel del niño, integrando elementos que se ajusten a sus intereses y desafíos.
+        Es importante que los tipos de pasos se alternen de manera que el contenido sea atractivo y efectivo.
 
         El resultado debe incluir:
         - **lessonGoalDescription:** Una descripción clara y concisa del objetivo general de la lección.
         - **lessonSteps:** Una lista de pasos, donde cada paso incluye:
           - **stepPrompt:** Una instrucción concisa para que otro agente genere la explicación (explanation) o el ejercicio (exercise).
-          - **stepDescription:** Contexto y orientación detallada sobre cómo abordar la creación del contenido del paso, centrándose en el tono, el estilo y la relevancia.
+          - **stepDescription:** Descripcion de los contenidos específicos que se deben incluir en el paso y del contexto necesario para crearlo.
           - **stepType:** Indica si el paso es una "explanation" o un "exercise".
 
         Enfócate en garantizar que la estructura sea clara y atractiva. El **stepPrompt** debe actuar como un comando directo para otro agente, mientras que el **stepDescription** proporciona razonamiento y orientación para crear el paso de manera efectiva.
@@ -183,5 +187,21 @@ export const generateExplanation = async ({
   });
 
   if (!object) throw Error("No object in result");
+
+  object.prompt =
+    `
+  Eres un profesor de educacion basica y tu objetivo es explicar la materia de la lección de matemáticas a un estudiante de entre 6 y 12 años.
+
+  Debes tener una conversación clara y concisa con el estudiante, asegurándote de que pueda entender la materia.
+
+  Desde el primer mensaje, guia al estudiante a través de la materia de la lección, asegurándote de que pueda comprender los conceptos.s
+
+  ` + object.prompt;
+
+  object.prompt += `
+    No generes textos que sean bloques de código Markdown, es decir que no tengan el caracter de backtick (\`).
+    Las fórmulas de latex deben ir entre signos de dólar (\$) y no entre backticks (\`).
+    `;
+
   return object;
 };

@@ -9,7 +9,8 @@ interface LatexAnnotation {
 }
 
 // https://mafs.dev/guides/experimental/latex
-const Latex = ({ latex }: LatexAnnotation) => {
+export const Latex = ({ latex }: LatexAnnotation) => {
+  console.log("latex es esto", latex);
   return (
     <Mafs>
       <LaTeX

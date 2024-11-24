@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 const commonLessonStepSchema = {
+  stepTitle: v.string(),
   lessonId: v.id("lessons"),
   contextId: v.optional(v.id("lessonStepContext")),
   previousStep: v.optional(v.id("lessonSteps")),

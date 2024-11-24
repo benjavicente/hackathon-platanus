@@ -6,6 +6,7 @@ import { openai } from "@ai-sdk/openai";
 import { getModel } from "./ai";
 import { type Message } from "ai/react";
 import { z } from "zod";
+import { countNumberPrompt } from "@/math/constants/math";
 
 export const getMath = httpAction(async (ctx, request) => {
   const model = getModel("anthropic.claude-3-haiku-20240307-v1:0");
@@ -26,29 +27,44 @@ export const getMath = httpAction(async (ctx, request) => {
 export const createExplanation = httpAction(async (ctx, request) => {
   const { messages } = await request.json();
 
-  const model = getModel("anthropic.claude-3-haiku-20240307-v1:0");
+  // OJO CON EL MODELO ESTO ES LEGACY. DA LO MISMO QUE LE PASES UN STRING.
+  const model = getModel("legacy-deprecated-ignore-this-value");
   const result = streamText({
     model: model,
     messages: messages,
     onFinish: (messages) => {
       console.log("Guardar messages");
     },
+    toolChoice: "auto",
     tools: {
-      getLatex: tool({
-        description:
-          "Si el ejercicio tiene que ver con formulas mateticas, quiero que me devuelvas  un atributo aparte que sea solo la formula en Latex. Por ejemplo si te dicen 2+2, quiero que me devuelvas en sintaxis de latex.",
+      getInfiniteNumber: tool({
+        description: "Usa esta herramienta cuando quieras explicar que es infinito",
         parameters: z.object({
-          latex: z.string(),
+          description: z.string(),
         }),
         execute: async (props) => {
           return {
-            type: "latex",
-            latex: props.latex,
+            type: "getInfiniteNumber",
+            description: props.description,
+          };
+        },
+      }),
+
+      showNextActivityButton: tool({
+        description: `Usa esta herramienta para mostrar el boton para ir a la proxima actividad.
+           Debes mostrarlo cuando el estudiante haya comprendido el tema que le estas enseñando
+           o cuando el estudiante no quiera continuar la conversación`,
+        parameters: z.object({}),
+        execute: async (props) => {
+          return {
+            type: "showNextActivityButton",
           };
         },
       }),
     },
   });
+
+  console.log(result);
 
   return result.toDataStreamResponse({
     headers: {

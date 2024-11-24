@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Message, useChat } from "ai/react";
 import InfiniteNumberLineSchema from "../components/math/InfiniteNumberLine";
 import MultiplicationBlocks from "@/components/math/MultiplierBlocks";
+import { Latex } from "@/components/math/Formula";
+import { Fragment } from "react";
 
 export const Route = createFileRoute("/math")({
   component: RouteComponent,
@@ -25,60 +27,63 @@ const problem: ProblemQuestion = {
 };
 function RouteComponent() {
   const chatId = "test";
-  const mockData: Message[] = [
-    {
-      id: "asd",
-      content:
-        "Eres un asistente de matematicas que ayuda a los estudiantes a aprender. Tienes que tener un tono amigable.",
-      role: "system",
-    },
-  ];
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  // const mockData: Message[] = [
+  //   {
+  //     id: "asd",
+  //     content:
+  //       "Eres un asistente de matematicas que ayuda a los estudiantes a aprender. Tienes que tener un tono amigable.",
+  //     role: "system",
+  //   },
+  // ];
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/explain",
     body: {
       chatId,
     },
-    initialMessages: mockData || [[]],
+    initialMessages: [],
     onFinish: () => {
       console.log(messages);
     },
   });
 
   return (
-    <>
+    <Fragment key="form-container-math">
       <h1>Math</h1>
       {/* <InfiniteNumberLineSchema />
       <MultiplicationBlocks /> */}
       <div>
-        {messages.map((message) => {
-          if (message.toolInvocations && message.toolInvocations.length > 1) {
-            message.toolInvocations.map((tool) => {
-              if (tool.toolName === "InfiniteNumberLine") {
-                return <InfiniteNumberLineSchema key={message.id} />;
+        {messages.map((message) => (
+          <Fragment key={message.id}>
+            {message.content ? <div key={message.id}> {message}</div> : null}
+            {message.toolInvocations?.map((tool) => {
+              if (tool.toolName === "showNextActivityButton") {
+                return <button className="bg-sky-500 text-white px-2 rounded-xs w-full">terminar funcion</button>;
               }
-              if (tool.toolName === "MultiplicationBlocks") {
-                return <MultiplicationBlocks key={message.id} />;
+
+              if (tool.toolName === "getInfiniteNumber") {
+                return <InfiniteNumberLineSchema key={tool.toolCallId} />;
               }
-            });
-          }
-          return (
-            <div key={message.id}>
-              <p>{message.content}</p>
-            </div>
-          );
-        })}
+            })}
+          </Fragment>
+        ))}
       </div>
       <form onSubmit={handleSubmit}>
         <input type="text" value={input} onChange={handleInputChange} placeholder="Escribe un mensaje" />
-
-        <div>{problem.question}</div>
-
-        {problem.options.map((option) => {
-          return <button key={option}>{option}</button>;
-        })}
-
         <button type="submit">Enviar</button>
       </form>
-    </>
+    </Fragment>
   );
 }
+
+const renderToolInvocation = (tool: any, messageId: string) => {
+  switch (tool.toolName) {
+    case "InfiniteNumberLine":
+      return <InfiniteNumberLineSchema key={`${messageId}-${tool.toolCallId}`} />;
+    case "MultiplicationBlocks":
+      return <MultiplicationBlocks key={`${messageId}-${tool.toolCallId}`} />;
+    case "getLatex":
+      return <Latex latex={tool.result} key={`${messageId}-${tool.toolCallId}`} />;
+    default:
+      return null;
+  }
+};

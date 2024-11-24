@@ -1,11 +1,13 @@
-import * as React from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef, useLayoutEfect } from "react";
+import { createFileRoute, Link, useLayoutEffect } from "@tanstack/react-router";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
+import { Fragment } from "react";
+import InfiniteNumberLine from "@/components/math/InfiniteNumberLine";
 
 const lessonStepSchema = z.object({
   pregunta: z.optional(z.number()).default(0),
@@ -67,6 +69,7 @@ function RouteComponent() {
         <AIChat
           messages={state.messages}
           id={state.id}
+          key={state.id}
           endActivityCallback={markAsDoneMutation.mutate}
           endActivityMessage={nextActivity ? "Siguiente actividad" : "Terminar leccion"}
         />
@@ -78,19 +81,21 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <div className="grow ">
-        <div className="border-green-400 bg-green-50 px-4 py-16 rounded-lg shadow-sm">{actualQuestion.question}</div>
+      <div className="grow">
+        <div className="border-green-400 bg-green-50 px-4 py-16 rounded-lg shadow-sm text-center text-balance text-2xl">
+          {actualQuestion.question}
+        </div>
       </div>
 
       <div className="flex flex-col w-full  gap-2">
         {sendAnswer.isPending ? (
-          "Cargando..."
+          <div className="text-sky-900 text-center">Cargando</div>
         ) : actualQuestion.isCorrect === null ? (
           actualQuestion.options.map((option, index) => {
             return (
               <div key={index} className="col-span-1">
                 <button
-                  className="bg-gray-50 hover:outline-gray-200  hover:outline w-full hover:cursor-pointer text-4xl transform transition hover:scale-115 py-2l"
+                  className="bg-white hover:outline-sky-200  hover:outline w-full hover:shadow hover:shadow-sky-400/10 hover:cursor-pointer text-2xl py-2 transform transition hover:scale-115 py-2l"
                   onClick={() => sendAnswer.mutate(index)}
                 >
                   {option}
@@ -99,16 +104,35 @@ function RouteComponent() {
             );
           })
         ) : (
-          <div>
-            {actualQuestion.isCorrect ? <h1>Correcto</h1> : <h1>Incorrecto</h1>}
+          <div className="w-full flex flex-col text-center">
+            {actualQuestion.isCorrect ? (
+              <div className="mb-2 text-xl text-green-900">Correcto</div>
+            ) : (
+              <div className="mb-2 text-xl text-red-900">Incorrecto</div>
+            )}
             {pregunta === state.questionsStates.length - 1 ? (
               nextActivity ? (
-                <button onClick={markAsDoneMutation.mutate}>Siguiente actividad</button>
+                <button
+                  className="bg-sky-500 py-1 px-2 rounded-sm text-white w-full"
+                  onClick={markAsDoneMutation.mutate}
+                >
+                  Siguiente actividad
+                </button>
               ) : (
-                <button onClick={markAsDoneMutation.mutate}>Terminar leccion</button>
+                <button
+                  className="bg-sky-500 py-1 px-2 rounded-sm text-white w-full"
+                  onClick={markAsDoneMutation.mutate}
+                >
+                  Terminar leccion
+                </button>
               )
             ) : (
-              <Link from={Route.fullPath} to={Route.fullPath} search={{ pregunta: pregunta + 1 }}>
+              <Link
+                className="bg-sky-500 py-1 px-2 rounded-sm text-white w-full"
+                from={Route.fullPath}
+                to={Route.fullPath}
+                search={{ pregunta: pregunta + 1 }}
+              >
                 Siguiente pregunta
               </Link>
             )}
@@ -120,7 +144,7 @@ function RouteComponent() {
 }
 
 const msgStyles = cva({
-  base: "rounded px-2 py-1",
+  base: "rounded px-2 py-1 overflow-x-clip",
   variants: {
     role: {
       system: "hidden",
@@ -142,22 +166,43 @@ function AIChat({
   endActivityCallback: () => void;
   endActivityMessage: string;
 }) {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/explain",
     initialMessages: initialMessages,
     id,
+    onFinish: () => {
+      console.log(messages);
+    },
   });
 
   return (
-    <>
+    <Fragment key={"form-container-lesson"}>
       <h1>Math</h1>
-      {/* <InfiniteNumberLineSchema />
-      <MultiplicationBlocks /> */}
-      <div className="flex flex-col grow gap-1 overflow-y-auto">
+      <div className="flex flex-col grow gap-1 overflow-y-auto py-2">
         {messages.map((message) => (
-          <div key={message.id} className={msgStyles({ role: message.role })}>
-            <p>{message.content}</p>
-          </div>
+          <Fragment key={message.id}>
+            {message.content ? (
+              <div key={message.id} className={msgStyles({ role: message.role })}>
+                <Markdown text={message.content} key={message.id} />
+              </div>
+            ) : null}
+            {message.toolInvocations?.map((tool) => {
+              if (tool.toolName === "showNextActivityButton") {
+                return (
+                  <button
+                    key={tool.toolCallId}
+                    onClick={endActivityCallback}
+                    className="bg-sky-500 text-white px-2 rounded-xs w-full"
+                  >
+                    {endActivityMessage}
+                  </button>
+                );
+              }
+              if (tool.toolName === "getInfiniteNumber") {
+                return <InfiniteNumberLine key={tool.toolCallId} />;
+              }
+            })}
+          </Fragment>
         ))}
       </div>
       <form onSubmit={handleSubmit} className="flex gap-2">
@@ -173,10 +218,7 @@ function AIChat({
           Enviar
         </button>
       </form>
-      <button onClick={endActivityCallback} className="bg-sky-500 text-white px-2 rounded-xs mt-2">
-        {endActivityMessage}
-      </button>
-    </>
+    </Fragment>
   );
 }
 
@@ -189,6 +231,33 @@ async function playCorrectSound() {
   const audio = new Audio(correctSound);
   await audio.play();
 }
+
+import MarkdownIt from "markdown-it";
+import markdownItKatex from "@vscode/markdown-it-katex";
+function Markdown({ text }: { text: string }) {
+  const divRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (!divRef.current) return;
+    const md = new MarkdownIt().use(markdownItKatex);
+    divRef.current.innerHTML = md.render(
+      text.replace(/\\\(/g, "$").replace(/\\\)/g, "$").replace(/\\\[/g, "$$$").replace(/\\\]/g, "$$$"),
+    );
+  }, [text]);
+  return <div ref={divRef} />;
+}
+
+// export default defineNuxtPlugin((nuxtApp) => {
+//   const md = new MarkdownIt().use(markdownItKatex);
+//   const originalRender = md.render;
+//   md.render = function (...args) {
+//     const [src, ...rest] = args;
+//     const newSrc = src.replace(/\\\(/g, "$").replace(/\\\)/g, "$").replace(/\\\[/g, "$$$").replace(/\\\]/g, "$$$");
+//     // console.log(newSrc)
+//     return originalRender.call(this, newSrc, ...rest);
+//   };
+
+//   nuxtApp.provide("markdown", md);
+// });
 
 async function playIncorrectSound() {
   const audio = new Audio(wrongSound);
