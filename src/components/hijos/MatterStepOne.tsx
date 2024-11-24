@@ -6,7 +6,6 @@ const MatterStepOne = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // module aliases
     let Engine = Matter.Engine,
       Render = Matter.Render,
       Runner = Matter.Runner,
@@ -19,6 +18,9 @@ const MatterStepOne = () => {
       Vector = Matter.Vector,
       Mouse = Matter.Mouse;
 
+    // Scale factor
+    const scale = 0.4;
+
     // create an engine
     let engine = Engine.create();
 
@@ -28,31 +30,41 @@ const MatterStepOne = () => {
       engine: engine,
       canvas: canvasRef.current,
       options: {
+        width: 800 * scale,
+        height: 600 * scale,
         wireframes: false,
+        background: "white",
       },
     });
 
     // create two boxes and a ground
-    //
-    var group = Body.nextGroup(true);
+    let group = Body.nextGroup(true);
 
-    var stack = Composites.stack(250, 255, 1, 6, 0, 0, function (x, y) {
-      return Bodies.rectangle(x, y, 30, 30);
+    let stack = Composites.stack(250 * scale, 255 * scale, 1, 6, 0, 0, function (x, y) {
+      return Bodies.rectangle(x, y, 30 * scale, 30 * scale);
     });
 
-    var catapult = Bodies.rectangle(400, 520, 320, 20, { collisionFilter: { group: group } });
+    let catapult = Bodies.rectangle(400 * scale, 520 * scale, 320 * scale, 20 * scale, {
+      collisionFilter: { group: group },
+    });
 
     Composite.add(engine.world, [
       stack,
       catapult,
-      Bodies.rectangle(400, 600, 800, 50.5, { isStatic: true, render: { fillStyle: "#060a19" } }),
-      Bodies.rectangle(250, 555, 20, 50, { isStatic: true, render: { fillStyle: "#060a19" } }),
-      Bodies.rectangle(400, 535, 20, 80, {
+      Bodies.rectangle(400 * scale, 600 * scale, 800 * scale, 50.5 * scale, {
+        isStatic: true,
+        render: { fillStyle: "#060a19" },
+      }),
+      Bodies.rectangle(250 * scale, 555 * scale, 20 * scale, 50 * scale, {
+        isStatic: true,
+        render: { fillStyle: "#060a19" },
+      }),
+      Bodies.rectangle(400 * scale, 535 * scale, 20 * scale, 80 * scale, {
         isStatic: true,
         collisionFilter: { group: group },
         render: { fillStyle: "#060a19" },
       }),
-      Bodies.circle(560, 100, 50, { density: 0.005 }),
+      Bodies.circle(560 * scale, 100 * scale, 50 * scale, { density: 0.005 }),
       Constraint.create({
         bodyA: catapult,
         pointB: Vector.clone(catapult.position),
@@ -62,16 +74,16 @@ const MatterStepOne = () => {
     ]);
 
     // add mouse control
-    var mouse = Mouse.create(render.canvas),
-      mouseConstraint = MouseConstraint.create(engine, {
-        mouse: mouse,
-        constraint: {
-          stiffness: 0.2,
-          render: {
-            visible: false,
-          },
+    let mouse = Mouse.create(render.canvas);
+    let mouseConstraint = MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: {
+          visible: false,
         },
-      });
+      },
+    });
 
     Composite.add(engine.world, mouseConstraint);
 
@@ -84,7 +96,6 @@ const MatterStepOne = () => {
     let runner = Runner.create();
 
     // run the engine
-    Body.scale(catapult, 0.9, 1);
     Runner.run(runner, engine);
   }, []);
 

@@ -83,6 +83,15 @@ export const createExplanation = httpAction(async (ctx, request) => {
           };
         },
       }),
+      showCatapult: tool({
+        description: "Muestra un dibujo de un catapulta",
+        parameters: z.object({}),
+        execute: async (props) => {
+          return {
+            type: "showCatapult",
+          };
+        },
+      }),
     },
   });
 

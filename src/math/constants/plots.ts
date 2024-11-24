@@ -1,4 +1,4 @@
-export const PLOTS = ["CIRCLE", "SQUARE", "TRIANGLE", "ELLIPSE"] as const;
+export const PLOTS = ["CIRCLE", "SQUARE", "TRIANGLE", "ELLIPSE", "SQUARE"] as const;
 
 export type Plot = (typeof PLOTS)[number];
 
@@ -13,6 +13,7 @@ CÍRCULO     (forma perfectamente redonda)
 CUADRADO    (cuatro lados iguales)
 TRIÁNGULO   (tres lados)
 ELIPSE      (forma ovalada)
+CUADRADO    (cuatro lados iguales)
 
 El objetivo es ayudar al alumno a:
 - Reconocer formas geométricas básicas como circulo, cuadrado triangulo o elipse y sus diferencias

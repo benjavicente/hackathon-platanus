@@ -192,7 +192,6 @@ function AIChat({
             ) : null}
             {message.toolInvocations?.map((tool) => (
               <div>
-                {JSON.stringify(tool)}
                 {tool.toolName === "showNextActivityButton" ? (
                   <button
                     key={tool.toolCallId}
@@ -211,6 +210,8 @@ function AIChat({
                     <CirclePlot key={tool.toolCallId} />
                   ) : tool.args.figure === "ELLIPSE" ? (
                     <EllipsePlot key={tool.toolCallId} />
+                  ) : tool.args.figure === "SQUARE" ? (
+                    <SquarePlot key={tool.toolCallId} />
                   ) : null
                 ) : tool.toolName === "createSVG" ? (
                   <svg
@@ -223,6 +224,8 @@ function AIChat({
                       <ShapeRenderer key={tool.toolCallId} shape={svg} />
                     ))}
                   </svg>
+                ) : tool.toolName === "showCatapult" ? (
+                  <MatterStepOne key={tool.toolCallId} />
                 ) : null}
               </div>
             ))}
@@ -241,7 +244,6 @@ function AIChat({
           Enviar
         </button>
       </form>
-      <MatterStepOne />
     </Fragment>
   );
 }
@@ -259,7 +261,7 @@ async function playCorrectSound() {
 import MarkdownIt from "markdown-it";
 
 import markdownItKatex from "@vscode/markdown-it-katex";
-import { CirclePlot, EllipsePlot } from "@/components/math/Plot";
+import { CirclePlot, EllipsePlot, SquarePlot } from "@/components/math/Plot";
 function Markdown({ text }: { text: string }) {
   const divRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {

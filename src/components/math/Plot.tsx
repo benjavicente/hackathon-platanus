@@ -1,7 +1,8 @@
 import "mafs/core.css";
 import "mafs/font.css";
 
-import { Mafs, Circle, Coordinates, useMovablePoint, vec, Transform, Ellipse, Theme } from "mafs";
+import { Mafs, Circle, Coordinates, useMovablePoint, vec, Transform, Ellipse, Theme, Polygon } from "mafs";
+
 export const CirclePlot = () => {
   const pointOnCircle = useMovablePoint([Math.sqrt(2) / 2, Math.sqrt(2) / 2]);
   const r = vec.mag(pointOnCircle.point);
@@ -61,6 +62,49 @@ export const EllipsePlot = () => {
       </Transform>
 
       {translate.element}
+    </Mafs>
+  );
+};
+
+export const SquarePlot = () => {
+  const center = [0, 0] as [number, number]; // Center of the square
+  const initialPoint = [1, 0] as [number, number]; // Initial position of the movable point
+  const movablePoint = useMovablePoint(initialPoint, {
+    constrain: (p) => {
+      // Constrain the movable point to the right edge of the square
+      const angle = Math.atan2(p[1], p[0]);
+      const distance = Math.sqrt(p[0] ** 2 + p[1] ** 2); // Distance to the center
+      return [Math.cos(angle) * distance, Math.sin(angle) * distance];
+    },
+  });
+
+  const size = Math.sqrt(movablePoint.point[0] ** 2 + movablePoint.point[1] ** 2); // Distance determines square size
+  const angle = Math.atan2(movablePoint.point[1], movablePoint.point[0]); // Rotation angle
+
+  return (
+    <Mafs>
+      <Coordinates.Cartesian />
+
+      {/* Translate the square based on the center */}
+      <Transform translate={center}>
+        {/* Apply rotation based on the movable point */}
+        <Transform rotate={angle}>
+          {/* Apply scaling based on the movable point's distance from the center */}
+          <Transform scale={[size, size]}>
+            <Polygon
+              points={[
+                [1, 1],
+                [1, -1],
+                [-1, -1],
+                [-1, 1],
+              ]}
+              color={Theme.blue}
+            />
+          </Transform>
+        </Transform>
+      </Transform>
+
+      {movablePoint.element}
     </Mafs>
   );
 };
