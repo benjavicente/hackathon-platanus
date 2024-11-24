@@ -7,6 +7,7 @@ import { OnboardingDataWithId } from "@/components/types/onboarding";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { queryClient } from "@/client";
+import { NavBar } from "@/components/navbar";
 
 export const Route = createFileRoute("/papas/")({
   component: RouteComponent,
@@ -19,7 +20,13 @@ function RouteComponent() {
   const createLesson = useConvexMutation(api.lessons.create);
   const navigate = Route.useNavigate();
   const [selectedChild, setSelectedChild] = React.useState("");
-  const children = JSON.parse(localStorage.getItem("onboardingData") || "[]");
+  const [children, setChildren] = React.useState<OnboardingDataWithId[]>(() => 
+    JSON.parse(localStorage.getItem("onboardingData") || "[]")
+  );
+
+  const toggleSelectedChild = (childId: string) => {
+    setSelectedChild(prev => prev === childId ? "" : childId);
+  };
 
   const createLessonMutation = useMutation({
     mutationFn: createLesson,
@@ -28,20 +35,30 @@ function RouteComponent() {
     },
   });
 
+  const deleteChild = (childId: string) => {
+    const updatedChildren = children.filter(child => child.id !== childId);
+    localStorage.setItem("onboardingData", JSON.stringify(updatedChildren));
+    setChildren(updatedChildren);
+    if (selectedChild === childId) {
+      setSelectedChild("");
+    }
+  };
+
   const selectedChildData = children.find((child: OnboardingDataWithId) => child.id === selectedChild);
 
   const { data: lessons } = useSuspenseQuery(convexQuery(api.lessons.list, {}));
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <NavBar/>
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Create a Lesson</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         {children.map((child: OnboardingDataWithId) => (
           <div
             key={child.id}
-            onClick={() => setSelectedChild(child.id)}
+            onClick={() => toggleSelectedChild(child.id)}
             className={`
-              cursor-pointer rounded-xl p-6 transition-all duration-200 h-54
+              cursor-pointer rounded-xl p-6 transition-all duration-200 h-54 relative
               ${
                 selectedChild === child.id
                   ? "bg-sky-500 !text-white shadow-lg scale-101"
@@ -49,6 +66,15 @@ function RouteComponent() {
               }
             `}
           >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteChild(child.id);
+              }}
+              className="absolute top-0 left-1 p-2 text-red-500 hover:text-red-700 transition-colors hover:cursor-pointer"
+            >
+              x
+            </button>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xl font-semibold capitalize font-fraunces">{child.childName}</span>
@@ -92,16 +118,8 @@ function RouteComponent() {
               </Link>
             </div>
           ))}
-          <button onClick={() => playSound()}>Play sound</button>
         </div>
       </div>
     </div>
   );
-}
-
-import correctSound from "../../assets/correct.mp3";
-
-async function playSound() {
-  const audio = new Audio(correctSound);
-  await audio.play();
 }
