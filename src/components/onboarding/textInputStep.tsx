@@ -55,7 +55,7 @@ export function TextInputStep({ stepData, onNext }: Props) {
             : 'bg-[var(--brand-color)] hover:opacity-90'
           }`}
       >
-        Continue
+        Continuar
       </button>
     </form>
   );

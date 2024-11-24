@@ -18,7 +18,7 @@ export function StepProgress() {
         ))}
       </div>
       <div className="text-sm text-center mt-2">
-        Step {currentStep} of {onboardingSteps.length}
+        Paso {currentStep} de {onboardingSteps.length}
       </div>
     </div>
   );

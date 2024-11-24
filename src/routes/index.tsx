@@ -10,21 +10,21 @@ function HomeComponent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
       {/* Hero Section */}
-      <header className="max-w-screen-xl mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
-        <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
+      <header className="max-w-screen-lg mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
+        <div className="w-full lg:w-3/5 mb-10 lg:mb-0">
         <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
           <h1 className="text-4xl font-bold text-sky-950 mb-6">
             La Fórmula Perfecta para que tus hijos aprueben en Matemáticas
           </h1>
-          <p className="text-sky-800 mb-8">
+          <p className="text-sky-800 mb-8 mr-12">
             Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy, <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
           </p>
           <Link to="/onboarding" className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors hover:cursor-pointer">
             Empieza gratis ahora <span className="ml-2 text-lg">→</span>
           </Link>
         </div>
-        <div className="w-full lg:w-1/2 flex justify-center">
+        <div className="w-full lg:w-2/5 flex justify-center">
           <img src={hero} alt="Students learning" className="max-w-md w-full rounded-4xl" />
         </div>
       </header>

@@ -46,7 +46,7 @@ export function MultiSelectStep({ stepData, onNext }: Props) {
             : 'bg-[var(--brand-color)] hover:opacity-90'
           }`}
       >
-        Continue
+        Continuar
       </button>
     </div>
   );
