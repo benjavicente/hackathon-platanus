@@ -104,7 +104,7 @@ function RouteComponent() {
   );
 }
 
-import correctSound from "../../assets/duolingo-correct.mp3";
+import correctSound from "../../assets/correct.mp3"
 
 async function playSound() {
   const audio = new Audio(correctSound);
