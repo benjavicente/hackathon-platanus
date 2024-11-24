@@ -3,9 +3,9 @@ import { useState } from "react";
 interface DinoMultiplicationProps {
   group1: string;
   group2: string;
-  onCorrectAnswer: () => void;
+  handleSubmit: any;
 }
-const DinoMultiplication = ({ group1, group2, onCorrectAnswer = () => {}, onIncorrectAnswer = () => {} }) => {
+const DinoMultiplication = ({ group1, group2, handleSubmit = () => {} }: DinoMultiplicationProps) => {
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
@@ -17,11 +17,13 @@ const DinoMultiplication = ({ group1, group2, onCorrectAnswer = () => {}, onInco
     if (userNum === correctAnswer) {
       setFeedback("¡RAWR! ¡Correcto! 🦖");
       setIsCorrect(true);
-      onCorrectAnswer();
+      console.log("handlesubmit");
+      console.log({ handleSubmit });
+      handleSubmit(userNum.toString());
     } else {
       setFeedback("¡Ups! Cuenta todos los dinosaurios de nuevo 🦕");
       setIsCorrect(false);
-      onIncorrectAnswer();
+      handleSubmit(userNum.toString());
     }
   };
 
