@@ -39,6 +39,9 @@ function RouteComponent() {
       chatId,
     },
     initialMessages: mockData || [[]],
+    onFinish: () => {
+      console.log(messages);
+    },
   });
 
   return (
@@ -47,11 +50,23 @@ function RouteComponent() {
       {/* <InfiniteNumberLineSchema />
       <MultiplicationBlocks /> */}
       <div>
-        {messages.map((message) => (
-          <div key={message.id}>
-            <p>{message.content}</p>
-          </div>
-        ))}
+        {messages.map((message) => {
+          if (message.toolInvocations && message.toolInvocations.length > 1) {
+            message.toolInvocations.map((tool) => {
+              if (tool.toolName === "InfiniteNumberLine") {
+                return <InfiniteNumberLineSchema key={message.id} />;
+              }
+              if (tool.toolName === "MultiplicationBlocks") {
+                return <MultiplicationBlocks key={message.id} />;
+              }
+            });
+          }
+          return (
+            <div key={message.id}>
+              <p>{message.content}</p>
+            </div>
+          );
+        })}
       </div>
       <form onSubmit={handleSubmit}>
         <input type="text" value={input} onChange={handleInputChange} placeholder="Escribe un mensaje" />
@@ -66,5 +81,4 @@ function RouteComponent() {
       </form>
     </>
   );
-
 }

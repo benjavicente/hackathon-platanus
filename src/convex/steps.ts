@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { Message } from "ai";
 
 export const makeAnswer = mutation({
   args: {
@@ -60,6 +61,7 @@ export const get = query({
         questionsStates: context.questions.map((question, index) => {
           console.log(state.responses.length, index, state.responses[index] === question.correctOption);
           return {
+            id: state._id,
             type: "exercise",
             question: question.question,
             options: question.options,
@@ -69,8 +71,16 @@ export const get = query({
       } as const;
     } else if (context.type === "explanation") {
       return {
+        id: state._id,
         type: "explanation",
-        messages: [],
+        messages: [
+          { id: "system", role: "system", content: context.prompt },
+          {
+            id: "initial",
+            role: "assistant",
+            content: "Hola! Cuentame",
+          },
+        ] satisfies Message[],
       } as const;
     } else {
       throw new Error("Invalid context type");

@@ -25,7 +25,12 @@ export function getModel(modelString: string) {
 }
 
 export const explanationSchema = z.object({
-  prompt: z.string(),
+  prompt: z.string().describe(`
+    Contexto que debe saber el agente sobre las preguntas que ya resolvió el estudiante.
+    En caso de que no haya resuelto preguntas aún, entonces el contexto debe ser una introducción a la lección.
+
+    `),
+  initialMessage: z.string().describe("Mensaje de saludo del chatbot"),
 });
 
 export const exerciseSchema = z.object({
@@ -34,7 +39,7 @@ export const exerciseSchema = z.object({
       z.object({
         type: z.literal("choice").describe("type MUST be choice"),
         question: z.string(),
-        options: z.array(z.string()).describe("Must be an array of strings"),
+        options: z.array(z.string()).describe("Debe ser un array de strings"),
         correctOption: z.number().describe("El index de la opción correcta en el array de opciones."),
       }),
     ]),
@@ -81,9 +86,9 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
         Crea una lección estructurada de matemáticas basada en la siguiente descripción proporcionada por un padre: ${parentContextDescription}.
         Ten en consideración que las lecciones están dirigidas a un estudiante de educación básica en Chile.
 
-        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos (debe incluir al menos 5 de tipo exercises) de los siguientes tipos:
-        - **Explanation:** Debes proporcionar instrucciones para que otro agente genere una explicación simple y divertida del tema, personalizada según las necesidades e intereses del niño.
-        - **Exercise:** Debes proporcionar instrucciones para que otro agente cree al menos tres problemas de práctica adaptados al nivel del niño, integrando elementos que se ajusten a sus intereses y desafíos.
+        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos (debe incluir al menos 4 de tipo exercises y 1 de explanation) de los siguientes tipos:
+        - **Explanation:** Debes proporcionar un input de contexto para un chatbot que guiará una conversación sobre las preguntas que el estudiante ya contestó.
+        - **Exercise:** Debes proporcionar instrucciones para que otro agente cree problemas de práctica adaptados al nivel del niño, integrando elementos que se ajusten a sus intereses y desafíos.
 
         El resultado debe incluir:
         - **lessonGoalDescription:** Una descripción clara y concisa del objetivo general de la lección.
@@ -118,24 +123,22 @@ export const generateExercise = async ({
       stepDescription +
       stepPrompt +
       `
-      Finalmente, ten en consideración que las preguntas no pueden estar relacionadas entre sí y deben ser independientes.
-      Sin embargo, todas deben estar relacionadas a la temática de la lección y al objetivo de la misma. Asegúrate de que cada pregunta sea clara y concisa.
-      No hagas metapreguntas. Es decir, no hagas preguntas que requieran responder preguntas. Solo respuestas.
-      Las respuestas son únicas y no se repiten.
-      No hagas preguntas ambiguas. Por ejemplo: Es probable que llueva hoy"" es una pregunta invalida.
 
-      A continuación, diseña preguntas matemáticas claras, concisas e independientes entre sí, relacionadas con la temática de la lección y su objetivo. Considera las siguientes reglas:
+      A continuación, basado en el contexto anterior, diseña preguntas matemáticas claras, concisas e independientes entre sí, relacionadas con la temática de la lección y su objetivo. Considera las siguientes reglas:
 
-        Las preguntas deben ser independientes; no se relacionan entre sí.
+      Las preguntas deben ser independientes; no se relacionan entre sí.
 
-        No uses metapreguntas. Se debe responder directamente sin requerir la formulación de otras preguntas.
+      No uses metapreguntas. Se debe responder directamente sin requerir la formulación de otras preguntas.
 
-        Las respuestas correctas son únicas y no se repiten.
+      Las respuestas correctas son únicas y no se repiten.
 
-        Evita ambigüedades; cada pregunta debe tener una interpretación única.
+      Evita ambigüedades; cada pregunta debe tener una interpretación única.
 
+      Asegúrate de que cada pregunta sea clara y concisa.
 
-      Los siguientes son ejemplos de preguntas válidas, no te enfoques en las tematicas, sino en la estructura de las preguntas:
+      No hagas preguntas ambiguas. Por ejemplo: "Es probable que llueva hoy" es una pregunta invalida.
+
+      Los siguientes son ejemplos de preguntas válidas, no te enfoques en las tematicas ni en el nivel de dificultad exacto, sino en la estructura de las preguntas:
       <example>
       Pregunta:
       Si en un torneo de ajedrez hay 4 mesas y en cada mesa se juegan 2 partidas simultáneamente, ¿cuántas partidas se juegan en total?

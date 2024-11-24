@@ -36,6 +36,7 @@ export const lessonStepContextSchema = v.union(
   v.object({
     type: v.literal("explanation"),
     prompt: v.string(),
+    initialMessage: v.string(),
   }),
 );
 

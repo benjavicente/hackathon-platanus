@@ -61,17 +61,15 @@ function RouteComponent() {
     },
   });
 
-  const endStep = null;
-
   if (state.type === "explanation") {
     return (
       <>
-        <div>Aqui va un chat</div>
-        {nextActivity ? (
-          <button onClick={markAsDoneMutation.mutate}>Siguiente actividad</button>
-        ) : (
-          <button onClick={markAsDoneMutation.mutate}>Terminar leccion</button>
-        )}
+        <AIChat
+          messages={state.messages}
+          id={state.id}
+          endActivityCallback={markAsDoneMutation.mutate}
+          endActivityMessage={nextActivity ? "Siguiente actividad" : "Terminar leccion"}
+        />
       </>
     );
   }
@@ -121,9 +119,72 @@ function RouteComponent() {
   );
 }
 
+const msgStyles = cva({
+  base: "rounded px-2 py-1",
+  variants: {
+    role: {
+      system: "hidden",
+      user: "ml-8 bg-sky-100 border border-sky-200",
+      assistant: "mr-8 bg-white border border-sky-200",
+      data: "bg-red-500",
+    },
+  },
+});
+
+function AIChat({
+  messages: initialMessages,
+  id,
+  endActivityCallback,
+  endActivityMessage,
+}: {
+  messages: Message[];
+  id: string;
+  endActivityCallback: () => void;
+  endActivityMessage: string;
+}) {
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/explain",
+    initialMessages: initialMessages,
+    id,
+  });
+
+  return (
+    <>
+      <h1>Math</h1>
+      {/* <InfiniteNumberLineSchema />
+      <MultiplicationBlocks /> */}
+      <div className="flex flex-col grow gap-1 overflow-y-auto">
+        {messages.map((message) => (
+          <div key={message.id} className={msgStyles({ role: message.role })}>
+            <p>{message.content}</p>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Escribe un mensaje"
+          className="grow border border-sky-600 px-2 bg-white round-xs"
+        />
+
+        <button type="submit" className="bg-sky-500 text-white px-2 rounded-xs">
+          Enviar
+        </button>
+      </form>
+      <button onClick={endActivityCallback} className="bg-sky-500 text-white px-2 rounded-xs mt-2">
+        {endActivityMessage}
+      </button>
+    </>
+  );
+}
+
 import correctSound from "../../assets/correct.mp3";
 import wrongSound from "../../assets/wrong.mp3";
 
+import { Message, useChat } from "@ai-sdk/react";
+import { cva } from "cva";
 async function playCorrectSound() {
   const audio = new Audio(correctSound);
   await audio.play();
