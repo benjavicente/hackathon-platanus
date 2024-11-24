@@ -7,7 +7,7 @@ import { lessonStepContextSchema } from "./schema";
 
 export const list = query({
   handler: async (ctx) => {
-    return ctx.db.query("lessons").collect();
+    return ctx.db.query("lessons").order("desc").collect();
   },
 });
 
@@ -53,8 +53,8 @@ export const createSteps = internalMutation({
     steps: v.array(
       v.object({
         stepPrompt: v.string(),
-        stepDescription: v.string(),
         stepType: v.union(v.literal("explanation"), v.literal("exercise")),
+        stepTitle: v.string(),
       }),
     ),
   },
@@ -64,10 +64,11 @@ export const createSteps = internalMutation({
     const stepsIds = [];
     let lastStepId: Id<"lessonSteps"> | undefined = undefined;
     let i = 0;
-    for (const stepParams of steps.reverse()) {
+    for (const { stepTitle, ...stepParams } of steps) {
       const stepId = await ctx.db.insert("lessonSteps", {
         type: stepParams.stepType,
         previousStep: lastStepId,
+        stepTitle,
         lessonId,
         completed: false,
       });
@@ -94,17 +95,16 @@ export const createSteps = internalMutation({
 export const buildStepWithAI = internalAction({
   args: {
     stepPrompt: v.string(),
-    stepDescription: v.string(),
     stepType: v.union(v.literal("explanation"), v.literal("exercise")),
     stepId: v.id("lessonSteps"),
   },
-  handler: async (ctx, { stepId, stepPrompt, stepDescription, stepType }) => {
+  handler: async (ctx, { stepId, stepPrompt, stepType }) => {
     let result: Infer<typeof lessonStepContextSchema>;
     if (stepType === "exercise") {
-      const data = await generateExercise({ stepPrompt, stepDescription });
+      const data = await generateExercise({ stepPrompt });
       result = { ...data, type: "exercise" };
     } else if (stepType === "explanation") {
-      const data = await generateExplanation({ stepPrompt, stepDescription });
+      const data = await generateExplanation({ stepPrompt });
       result = { ...data, type: "explanation" };
     } else {
       throw new Error("Invalid step type");
@@ -169,5 +169,39 @@ export const get = query({
     }
 
     return { ...completeLesson, steps: steps.reverse() };
+  },
+});
+
+async function getStepWithState(ctx: QueryCtx, step: Doc<"lessonSteps">) {
+  const state = await ctx.db
+    .query("lessonStepsState")
+    .withIndex("by_stepid", (q) => q.eq("stepId", step._id))
+    .unique();
+
+  if (!state) throw new Error("State not found");
+  if (!step.contextId) throw new Error("Context not found");
+  const context = await ctx.db.get(step.contextId);
+  if (!context) throw new Error("Context not found");
+
+  return { ...step, state, context };
+}
+
+export const results = query({
+  args: { lessonId: v.id("lessons") },
+  handler: async (ctx, { lessonId }) => {
+    const lesson = await ctx.db.get(lessonId);
+    if (!lesson || !lesson.stepGoalId) throw new Error("404");
+
+    let currentLessonState = await ctx.db.get(lesson.stepGoalId);
+    if (!currentLessonState) throw new Error("Lesson step not found");
+
+    const steps = [await getStepWithState(ctx, currentLessonState)];
+
+    while (currentLessonState.previousStep) {
+      currentLessonState = await ctx.db.get(currentLessonState.previousStep);
+      if (!currentLessonState) break;
+      steps.push(await getStepWithState(ctx, currentLessonState));
+    }
+    return steps.reverse();
   },
 });

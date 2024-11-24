@@ -78,7 +78,7 @@ export const get = query({
           {
             id: "initial",
             role: "assistant",
-            content: "Hola! Cuentame",
+            content: context.initialMessage,
           },
         ] satisfies Message[],
       } as const;

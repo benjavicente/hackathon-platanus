@@ -22,7 +22,11 @@ function RouteComponent() {
             params={{ lessonId: lesson._id }}
             className="bg-white p-2 rounded shadow-sky-100 shadow"
           >
-            {lesson.name} -{lesson.lessonGoalDescription}
+            <div className="flex justify-between">
+              <div>{lesson.name}</div>
+              <div>{lesson.completed ? "Completado" : "Pendiente"}</div>
+            </div>
+            <div>{lesson.lessonGoalDescription}</div>
           </Link>
         ))}
       </div>

@@ -23,6 +23,7 @@
     font-family: var(--font-display);
     background: var(--color-sky-100);
     color: var(--color-sky-950);
+    max-height: 100dvh;
   }
 
   h1,
@@ -36,7 +37,7 @@
     font-size: large;
     color: var(--brand-color);
   }
-  .font-fraunces{
+  .font-fraunces {
     font-family: var(--font-heading);
   }
 }

@@ -25,7 +25,6 @@ export interface ProblemQuestion {
 // });
 //
 const QuestionForm = ({ type, question, options, correctOption }): ProblemQuestion => {
-  const [isSuccess, setSuccess] = setState<boolean>(false);
   const answerMutation = useConvexMutation(api.steps.answer);
   const sendAnswer = useMutation({
     mutationFn: answerMutation,

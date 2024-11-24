@@ -12,15 +12,19 @@ function HomeComponent() {
       {/* Hero Section */}
       <header className="max-w-screen-lg mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
         <div className="w-full lg:w-3/5 mb-10 lg:mb-0">
-        <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
+          <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
           <h1 className="text-4xl font-bold text-sky-950 mb-6">
             La Fórmula Perfecta para que tus hijos aprendan Matemáticas
           </h1>
           <p className="text-sky-800 mb-8 mr-12">
-            Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy, <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
+            Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy,{" "}
+            <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
           </p>
-          <Link to="/onboarding" className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors hover:cursor-pointer">
+          <Link
+            to="/onboarding"
+            className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors hover:cursor-pointer"
+          >
             Empieza gratis ahora <span className="ml-2 text-lg">→</span>
           </Link>
         </div>
@@ -35,7 +39,9 @@ function HomeComponent() {
           <h2 className="text-2xl font-bold mb-10 text-center">¿Te identificas?</h2>
           <div className="flex flex-wrap gap-8 justify-center">
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm">
-              <p className="text-lg">"No sé cómo ayudar a mi hija con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
+              <p className="text-lg">
+                "No sé cómo ayudar a mi hija con sus tareas de matemáticas... ¡es demasiado complicado! 😰"
+              </p>
             </div>
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm pt-10">
               <p className="text-lg">"No tengo tiempo para buscar ejercicios ni revisar cómo va su aprendizaje. 😥"</p>
@@ -56,18 +62,19 @@ function HomeComponent() {
               {
                 title: "Genera Cuestionarios Automáticos",
                 icon: "📋",
-                description: "Solo selecciona el nivel, y Quompy crea ejercicios perfectos según las necesidades de tu hijo."
+                description:
+                  "Solo selecciona el nivel, y Quompy crea ejercicios perfectos según las necesidades de tu hijo.",
               },
               {
                 title: "Adapta los Niveles de Dificultad",
                 icon: "🧠",
-                description: "Si un ejercicio es demasiado difícil o fácil, Quompy ajusta el desafío automáticamente."
+                description: "Si un ejercicio es demasiado difícil o fácil, Quompy ajusta el desafío automáticamente.",
               },
               {
                 title: "Explicaciones Claras y Detalladas",
                 icon: "📖",
-                description: "Cada solución viene con una explicación paso a paso que incluso tú puedes entender."
-              }
+                description: "Cada solución viene con una explicación paso a paso que incluso tú puedes entender.",
+              },
             ].map((feature) => (
               <div key={feature.title} className="bg-sky-50 p-8 rounded-lg max-w-sm">
                 <div className="text-4xl mb-4">{feature.icon}</div>
@@ -88,12 +95,18 @@ function HomeComponent() {
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Recupera tu tiempo</span>
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Paz mental garantizada</span>
           </div>
-          <Link to="/onboarding" className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors">
+          <Link
+            to="/onboarding"
+            className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors"
+          >
             Empieza gratis ahora <span className="ml-2 text-lg">→</span>
           </Link>
+          <div className="flex gap-2 mt-8 items-center justify-center text-sky-800 underline">
+            <Link to="/hijos">Menu hijos</Link>
+            <Link to="/papas">Menu padres</Link>
+          </div>
         </div>
       </section>
-
     </div>
   );
 }
