@@ -13,8 +13,8 @@ function HomeComponent() {
         <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
         <img src="./favicon.png" alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
-          <h1 className="text-5xl font-bold text-sky-950 mb-6">
-            La Fórmula Perfecta para que tus hijos no sufran con las Matemáticas
+          <h1 className="text-4xl font-bold text-sky-950 mb-6">
+            La Fórmula Perfecta para que tus hijos aprueben en Matemáticas
           </h1>
           <p className="text-sky-800 mb-8">
             Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy, <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
@@ -31,7 +31,7 @@ function HomeComponent() {
       {/* Problem Section */}
       <section className="bg-sky-100 text-white py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-10 text-center">¿Te identificas?</h2>
+          <h2 className="text-2xl font-bold mb-10 text-center">¿Te identificas?</h2>
           <div className="flex flex-wrap gap-8 justify-center">
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm">
               <p className="text-lg">"No sé cómo ayudar a mi hijo con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
