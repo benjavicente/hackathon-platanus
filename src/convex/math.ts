@@ -95,6 +95,19 @@ export const createExplanation = httpAction(async (ctx, request) => {
           };
         },
       }),
+      showMultiplication: tool({
+        description: "Esta herramienta tienes que utilizarla cuando te pidan multiplicar o hacer ejercicios.",
+        parameters: z.object({
+          group1: z.number().describe("Esto corresponde al primer grupo de numeros"),
+          group2: z.number().describe("Esto corresponde al segundo grupo de numeros"),
+        }),
+        execute: async (props) => {
+          return {
+            group1: props.group1,
+            group2: props.group2,
+          };
+        },
+      }),
     },
   });
 
