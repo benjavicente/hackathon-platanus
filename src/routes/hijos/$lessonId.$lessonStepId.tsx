@@ -195,7 +195,7 @@ function AIChat({
               </div>
             ) : null}
             {message.toolInvocations?.map((tool) => (
-              <div>
+              <div key={tool.toolCallId}>
                 {tool.toolName === "showNextActivityButton" ? (
                   <button
                     key={tool.toolCallId}
@@ -230,6 +230,13 @@ function AIChat({
                   </svg>
                 ) : tool.toolName === "showCatapult" ? (
                   <MatterStepOne key={tool.toolCallId} />
+                ) : tool.toolName === "showMultiplication" ? (
+                  <DinoMultiplication
+                    key={tool.toolCallId}
+                    group1={tool.args.group1}
+                    group2={tool.args.group2}
+                    handleSubmit={handleSubmit}
+                  />
                 ) : null}
               </div>
             ))}
@@ -243,6 +250,7 @@ function AIChat({
           onChange={handleInputChange}
           placeholder="Escribe un mensaje"
           className="grow border border-sky-600 px-2 bg-white round-xs"
+          id="input-form-special"
         />
         <button type="submit" className="bg-sky-500 text-white px-2 rounded-xs">
           Enviar
@@ -284,6 +292,7 @@ async function playIncorrectSound() {
 }
 
 import { svgShapeSchema } from "../../convex/math";
+import DinoMultiplication from "@/components/math/DinoMultiplication";
 
 type SvgShape = z.infer<typeof svgShapeSchema>;
 
