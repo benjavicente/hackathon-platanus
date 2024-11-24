@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
-import favicon from "favicon.png";
+import favicon from "@/favicon.png";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
