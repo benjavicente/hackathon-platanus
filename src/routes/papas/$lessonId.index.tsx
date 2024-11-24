@@ -4,6 +4,7 @@ import { convexQuery } from "@convex-dev/react-query";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { queryClient } from "@/client";
+import loadingGif from "@/assets/loading.gif"
 
 export const Route = createFileRoute("/papas/$lessonId/")({
   component: RouteComponent,
@@ -48,6 +49,7 @@ function RouteComponent() {
   return (
     <div className="max-w-120 mx-auto w-full">
       <h1 className="text-sky-800 my-4 text-2xl">Creando lección para {lesson.name}</h1>
+      {lesson.createScheduled!.state.kind !== "success" && <img src={loadingGif} alt="loading" className="h-40 mx-auto" />}
       <div>{lesson.createScheduled!.state.kind !== "success" ? getMsgByString(lesson.createScheduledId!) : null}</div>
       {lesson.lessonGoalDescription ? <p>{lesson.lessonGoalDescription}</p> : null}
       <ul className="flex flex-col gap-2 py-4">

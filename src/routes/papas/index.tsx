@@ -71,9 +71,9 @@ function RouteComponent() {
                 e.stopPropagation();
                 deleteChild(child.id);
               }}
-              className="absolute top-0 left-1 p-2 text-red-500 hover:text-red-700 transition-colors hover:cursor-pointer"
+              className="absolute top-0 right-1 p-2  hover:text-red-700 transition-colors hover:cursor-pointer"
             >
-              x
+             x
             </button>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
