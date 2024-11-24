@@ -36,4 +36,7 @@
     font-size: large;
     color: var(--brand-color);
   }
+  .font-fraunces{
+    font-family: var(--font-heading);
+  }
 }

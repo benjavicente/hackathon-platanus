@@ -17,37 +17,37 @@ export const onboardingSteps: Step[] = [
     id: 1,
     name: 'gradeLevel',
     type: 'multiChoice',
-    question: "What's your child's grade level?",
-    description: "This helps us customize the math lessons appropriately",
-    options: ['1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade'],
+    question: "¿En qué curso está tu hijo/a?",
+    description: "Esto nos ayuda a personalizar las lecciones de matemáticas",
+    options: ['1° Básico', '2° Básico', '3° Básico', '4° Básico', '5° Básico', '6° Básico'],
     required: true
   },
   {
     id: 2,
-    name: 'topics',
+    name: 'topics', 
     type: 'multiSelect',
-    question: "Which math topics interest your child the most?",
-    options: ['Addition/Subtraction', 'Multiplication/Division', 'Fractions', 'Geometry', 'Word Problems'],
+    question: "¿Qué temas de matemáticas le interesan más a tu hijo/a?",
+    options: ['Suma/Resta', 'Multiplicación/División', 'Fracciones', 'Geometría', 'Problemas con Palabras'],
     required: true
   },
   {
     id: 3,
     name: 'interests',
-    type: 'textInput',
-    question: "Does your child have any special interests or hobbies?",
-    description: "We'll use this to personalize their experience",
+    type: 'textInput', 
+    question: "¿Tu hijo/a tiene algún interés o pasatiempo especial?",
+    description: "Usaremos esto para personalizar su experiencia",
     validation: (value: string) => value.length >= 2,
     required: true,
-    placeholder: "e.g. dinosaurs, space, sports"
+    placeholder: "ej: dinosaurios, espacio, deportes"
   },
   {
     id: 4,
     name: 'childName',
     type: 'textInput',
-    question: "What's your child's name?",
-    description: "We'll use this to personalize their experience",
+    question: "¿Cómo se llama tu hijo/a?",
+    description: "Usaremos esto para personalizar su experiencia",
     validation: (value: string) => value.length >= 2,
     required: true,
-    placeholder: "Enter your child's name"
+    placeholder: "Ingresa el nombre de tu hijo/a"
   }
 ];

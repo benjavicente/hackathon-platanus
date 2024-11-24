@@ -34,23 +34,23 @@ function RouteComponent() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Create a Lesson</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         {children.map((child: OnboardingDataWithId) => (
           <div
             key={child.id}
             onClick={() => setSelectedChild(child.id)}
             className={`
-              cursor-pointer rounded-xl p-6 transition-all duration-200
+              cursor-pointer rounded-xl p-6 transition-all duration-200 h-54
               ${selectedChild === child.id 
-                ? 'bg-sky-500 text-white shadow-lg scale-105' 
+                ? 'bg-sky-500 !text-white shadow-lg scale-101' 
                 : 'bg-white text-gray-800 border hover:shadow-md'
               }
             `}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold !text-white capitalize">{child.childName}</h2>
-                <span className="text-sm px-3 py-1 rounded-full bg-opacity-20 bg-rose-400">
+                <span className="text-xl font-semibold capitalize font-fraunces">{child.childName}</span>
+                <span className="text-sm px-3 py-1 rounded-full bg-opacity-20 ">
                   {child.gradeLevel}
                 </span>
               </div>
@@ -73,7 +73,7 @@ function RouteComponent() {
                       name: child.childName || ''
                     });
                   }}
-                  className="w-full mt-4 py-2 bg-white text-sky-500 rounded-lg hover:bg-sky-50 transition-colors font-medium"
+                  className="w-full mt-4 py-2 bg-white text-sky-500 rounded-lg hover:bg-sky-50 transition-colors font-medium hover:cursor-pointer"
                 >
                   Create Lesson
                 </button>
