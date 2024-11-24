@@ -5,7 +5,6 @@ import { StepProgress } from '../components/onboarding/stepProgress';
 import { MultiChoiceStep } from '../components/onboarding/multiChoiceStep';
 import { onboardingSteps } from '../components/onboarding/steps';
 import { MultiSelectStep } from '../components/onboarding/multiSelectStep';
-import { RangeSelectStep } from '../components/onboarding/rangeSelectStep';
 import { TextInputStep } from '../components/onboarding/textInputStep';
 import { FinalStep } from '../components/onboarding/finalStep';
 
@@ -15,18 +14,15 @@ export const Route = createFileRoute("/onboarding")({
 
 function OnboardingComponent() {
   const [onboardingData, setOnboardingData] = useAtom(onboardingAtom);
-  const currentStepData = onboardingSteps.find(
-    (step) => step.id === onboardingData.currentStep
-  );
+  const currentStepData = onboardingData.currentStep <= onboardingSteps.length 
+    ? onboardingSteps.find((step) => step.id === onboardingData.currentStep)
+    : null;
 
   const handleNext = (value: any) => {
     setOnboardingData((prev) => ({
       ...prev,
       currentStep: prev.currentStep + 1,
-      [currentStepData?.type === 'multiChoice' ? 'gradeLevel' : 
-        currentStepData?.type === 'multiSelect' ? 'topics' : 
-        currentStepData?.type === 'rangeSelect' ? 'dailyMinutes' : 
-        'childName']: value
+      [currentStepData?.name || '']: value
     }));
   };
 
@@ -52,12 +48,6 @@ function OnboardingComponent() {
               )}
               {currentStepData.type === 'multiSelect' && (
                 <MultiSelectStep 
-                  stepData={currentStepData} 
-                  onNext={handleNext} 
-                />
-              )}
-              {currentStepData.type === 'rangeSelect' && (
-                <RangeSelectStep 
                   stepData={currentStepData} 
                   onNext={handleNext} 
                 />

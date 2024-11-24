@@ -1,13 +1,7 @@
+import { OnboardingData } from '../types/onboarding';
 import { atom } from 'jotai';
 
-export interface OnboardingData {
-  gradeLevel?: string;
-  topics?: string[];
-  dailyMinutes?: string;
-  childName?: string;
-  currentStep: number;
-}
-
 export const onboardingAtom = atom<OnboardingData>({
-  currentStep: 1
+  currentStep: 1,
+  topics: []
 });

@@ -7,9 +7,10 @@ export function FinalStep() {
   const navigate = useNavigate();
 
   const handleComplete = () => {
-    // Here you would typically save the data to your backend
-    console.log('Saving onboarding data:', onboardingData);
-    navigate({ to: "/" });
+    const existingData = JSON.parse(localStorage.getItem('onboardingData') || '[]');
+    const newData = [...existingData, {...onboardingData, id: crypto.randomUUID()}];
+    localStorage.setItem('onboardingData', JSON.stringify(newData));
+    navigate({ to: "/papas" });
   };
 
   return (
@@ -18,16 +19,13 @@ export function FinalStep() {
         Great! We're all set!
       </h2>
       <div className="bg-gray-50 p-6 rounded-lg space-y-4">
-        <h3 className="font-bold">Your Learning Plan Summary:</h3>
+        <h3 className="font-bold capitalize">Here's the Learning Plan Summary for {onboardingData.childName}:</h3>
         <ul className="space-y-2">
-          <li>
-            <span className="font-semibold">Student:</span> {onboardingData.childName}
-          </li>
           <li>
             <span className="font-semibold">Grade Level:</span> {onboardingData.gradeLevel}
           </li>
           <li>
-            <span className="font-semibold">Daily Practice:</span> {onboardingData.dailyMinutes} minutes
+            <span className="font-semibold">Interests:</span> {onboardingData.interests}
           </li>
           <li>
             <span className="font-semibold">Focus Topics:</span>

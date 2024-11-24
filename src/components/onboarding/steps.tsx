@@ -3,16 +3,19 @@ export type StepType = 'multiChoice' | 'textInput' | 'multiSelect' | 'rangeSelec
 export interface Step {
   id: number;
   type: StepType;
+  name: string;
   question: string;
   description?: string;
   options?: string[];
   validation?: (value: any) => boolean;
   required?: boolean;
+  placeholder?: string;
 }
 
 export const onboardingSteps: Step[] = [
   {
     id: 1,
+    name: 'gradeLevel',
     type: 'multiChoice',
     question: "What's your child's grade level?",
     description: "This helps us customize the math lessons appropriately",
@@ -21,6 +24,7 @@ export const onboardingSteps: Step[] = [
   },
   {
     id: 2,
+    name: 'topics',
     type: 'multiSelect',
     question: "Which math topics interest your child the most?",
     options: ['Addition/Subtraction', 'Multiplication/Division', 'Fractions', 'Geometry', 'Word Problems'],
@@ -28,18 +32,22 @@ export const onboardingSteps: Step[] = [
   },
   {
     id: 3,
-    type: 'rangeSelect',
-    question: "How many minutes per day would you like your child to practice?",
-    description: "We recommend 15-30 minutes for optimal learning",
-    options: ['10', '15', '20', '30', '45', '60'],
-    required: true
+    name: 'interests',
+    type: 'textInput',
+    question: "Does your child have any special interests or hobbies?",
+    description: "We'll use this to personalize their experience",
+    validation: (value: string) => value.length >= 2,
+    required: true,
+    placeholder: "e.g. dinosaurs, space, sports"
   },
   {
     id: 4,
+    name: 'childName',
     type: 'textInput',
     question: "What's your child's name?",
     description: "We'll use this to personalize their experience",
     validation: (value: string) => value.length >= 2,
-    required: true
+    required: true,
+    placeholder: "Enter your child's name"
   }
 ];

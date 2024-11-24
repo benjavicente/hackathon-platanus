@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Step } from './steps';
 
 interface Props {
@@ -9,6 +9,11 @@ interface Props {
 export function TextInputStep({ stepData, onNext }: Props) {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setValue('');
+    setError('');
+  }, [stepData.id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +42,7 @@ export function TextInputStep({ stepData, onNext }: Props) {
           }}
           className="w-full p-4 border-2 rounded-lg focus:border-[var(--brand-color)] 
             outline-none transition-colors duration-200"
-          placeholder="Enter your child's name"
+          placeholder={stepData.placeholder}
         />
         {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
