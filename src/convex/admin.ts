@@ -10,9 +10,7 @@ export const deleteAll = mutation({
     for (const lessonStep of lessonSteps) {
       await ctx.db.delete(lessonStep._id);
     }
-    const lessonStepsBuilder = await ctx.db
-      .query("lessonStepsBuilder")
-      .collect();
+    const lessonStepsBuilder = await ctx.db.query("lessonStepContext").collect();
     for (const lessonStepBuilder of lessonStepsBuilder) {
       await ctx.db.delete(lessonStepBuilder._id);
     }

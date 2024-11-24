@@ -30,7 +30,7 @@ export const exerciseSchema = z.object({
         type: z.literal("choice"),
         question: z.string(),
         options: z.array(z.string()),
-        correctOption: z.number(),
+        correctOption: z.number().describe("El index de la opción correcta en el array de opciones."),
       }),
     ]),
   ),
@@ -51,26 +51,26 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
   const { object } = await generateObject({
     model: model,
     schema: z.object({
-      lessonGoalDescription: z.string().describe("The goal of the lesson"),
+      lessonGoalDescription: z.string().describe("El objetivo de la clase"),
       lessonSteps: z
         .array(
           z.object({
             stepPrompt: z
               .string()
               .describe(
-                "An instructional prompt for another agent to generate the actual content (explanation or exercise) for this step.",
+                "Un prompt con instrucciones para que el agente genere el contenido de este step, sea tipo explanation o excercise.",
               ),
             stepDescription: z
               .string()
               .describe(
-                "Context and detailed guidance for how to approach creating the step content, focusing on tone, style, and relevance.",
+                "Contexto y guía detallada de como crear el contenido para este step, centrándose en el tono, estilo y relevancia.",
               ),
             stepType: z
               .enum(["explanation", "exercise"])
-              .describe("The type of step in the lesson, either an explanation or an exercise."),
+              .describe("El tipo de step en la clase. Puede ser explanation o excercise."),
           }),
         )
-        .describe("The steps of the lesson."),
+        .describe("Los pasos de la clase."),
     }),
     prompt: `
       Create a structured mathematics lesson based on the following description provided by a parent: ${parentContextDescription}.
@@ -108,7 +108,32 @@ export const generateExercise = async ({
   const { object } = await generateObject({
     model: model,
     schema: exerciseSchema,
-    prompt: stepDescription + stepPrompt,
+    prompt:
+      stepDescription +
+      stepPrompt +
+      `
+
+    **Example:**
+    - **Question:** What is 2 + 2?
+    - **Options:**
+      [2, 10, 4, 5]
+
+    - **Correct Option:** 3
+
+
+
+    `,
+    tools: {
+      calculate: tool({
+        description:
+          "A tool for evaluating mathematical expressions. " +
+          "Example expressions: " +
+          "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
+        parameters: z.object({ expression: z.string() }),
+        execute: async ({ expression }) => mathjs.evaluate(expression),
+      }),
+    },
+    toolChoice: "required",
   });
 
   if (!object) throw Error("No object in result");
