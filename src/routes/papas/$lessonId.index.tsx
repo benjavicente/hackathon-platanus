@@ -59,13 +59,22 @@ function RouteComponent() {
         ))}
       </ul>
       {lesson.steps.length !== 0 && lesson.steps.every((l) => l.scheduledCreate?.state.kind === "success") ? (
-        <Link
-          from={Route.fullPath}
-          to="/hijos/$lessonId"
-          className="block  text-center bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 w-full rounded-sm"
-        >
-          Ir a la lección
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            from={Route.fullPath}
+            to="/hijos/$lessonId"
+            className="block  text-center bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 w-full rounded-sm"
+          >
+            Ir a la lección
+          </Link>
+          <Link
+            from={Route.fullPath}
+            to="/papas/$lessonId/resultados"
+            className="block  text-center bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 w-full rounded-sm"
+          >
+            Ver avances
+          </Link>
+        </div>
       ) : null}
     </div>
   );

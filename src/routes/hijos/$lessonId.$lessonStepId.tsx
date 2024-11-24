@@ -278,25 +278,12 @@ function Markdown({ text }: { text: string }) {
   return <div ref={divRef} />;
 }
 
-// export default defineNuxtPlugin((nuxtApp) => {
-//   const md = new MarkdownIt().use(markdownItKatex);
-//   const originalRender = md.render;
-//   md.render = function (...args) {
-//     const [src, ...rest] = args;
-//     const newSrc = src.replace(/\\\(/g, "$").replace(/\\\)/g, "$").replace(/\\\[/g, "$$$").replace(/\\\]/g, "$$$");
-//     // console.log(newSrc)
-//     return originalRender.call(this, newSrc, ...rest);
-//   };
-
-//   nuxtApp.provide("markdown", md);
-// });
-
 async function playIncorrectSound() {
   const audio = new Audio(wrongSound);
   await audio.play();
 }
 
-import { svgShapeSchema } from "../../convex/maths";
+import { svgShapeSchema } from "../../convex/math";
 
 type SvgShape = z.infer<typeof svgShapeSchema>;
 

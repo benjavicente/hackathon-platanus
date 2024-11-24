@@ -75,7 +75,7 @@ function RouteComponent() {
                   }}
                   className="w-full mt-4 py-2 bg-white text-sky-500 rounded-lg hover:bg-sky-50 transition-colors font-medium hover:cursor-pointer"
                 >
-                  Create Lesson
+                  Crear lección
                 </button>
               )}
             </div>
@@ -87,12 +87,7 @@ function RouteComponent() {
             <div key={lesson._id} className="p-2 border-b">
               <div>{lesson.lessonGoalDescription}</div>
 
-              <Link
-                from={Route.fullPath}
-                to="/papas/$lessonId/resultados"
-                params={{ lessonId: lesson._id }}
-                className="underline"
-              >
+              <Link from={Route.fullPath} to="/papas/$lessonId" params={{ lessonId: lesson._id }} className="underline">
                 Ir a la lección
               </Link>
             </div>
