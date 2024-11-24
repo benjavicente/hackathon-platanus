@@ -98,7 +98,7 @@ Los ejercicios son de 1 pregunta y 4 alternativas, donde la pregunta es texto y 
 Las preguntas deben ser creativas pero amigables a la edad del niño, y deben ser desafiantes pero no imposibles. Debes proporcionar instrucciones claras y concisas para que el agente pueda generar preguntas efectivas y atractivas.
 Debe considerar un nivel de dificultad adecuado, que aumente gradualmente a lo largo de la lección. Se creativo y considera el contexto de la lección.
 
-La lección debe comenzar con un paso de explicación seguido de cualquier número de pasos (debe incluir al menos 2 de tipo exercises y 2 de explanation).
+La lección debe comenzar con un paso de explicación seguido de cualquier número de pasos (debe incluir al menos 2 de tipo exercises y 1 de explanation).
 
 Tu debes entregar como respuesta:
 - **lessonGoalDescription:** Una descripción clara y concisa del objetivo general de la lección, considerando lo entregado por el padre y el foco de la lección.
