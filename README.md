@@ -50,6 +50,7 @@ Estamos participando en este hackathon para demostrar cómo la tecnología puede
 3. Las herramientas adaptadas a las familias son escasas, complicadas o costosas.
 
 **Con Quompy:**
+
 ✔ **Cerramos la brecha educativa** al permitir que cualquier apoderado, sin importar su nivel de experiencia, pueda ayudar a sus hijos en matemáticas.  
 ✔ Fomentamos la confianza y el aprendizaje en casa, reduciendo la carga de los profesores y potenciando los resultados escolares.  
 ✔ Apostamos por la inclusión: **educación accesible y práctica al alcance de todos.**
