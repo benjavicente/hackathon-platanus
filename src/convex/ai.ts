@@ -86,7 +86,8 @@ Tienes 2 tipos de pasos pasos que puedes realizar en la lección: explanation y 
 - **Explanation:** Debes entregarle solamente el contexto de las preguntas anteriores (y en caso de que no hayan, entonces sobre la lección en general). El agente usará este conocimiento para responder las dudas del estudiante,
 por lo que es muy importante que la explicación sea clara y concisa, y sobre todo que no repita preguntas anteriores o entregue más ejercicios. Deberás generar las instruciones para que se pueda realizar una conversación natural, efectiva y amigable para el estudiante,
 considerando un mensaje inicial que explique los temas relevantes para el estudiante dado la descripción del padre. El objetivo es que se puedan introducir o repazar conceptos antes de realizar los ejercicios o terminar la lección.
-Si es que el alumno quiere seguir a la siguiente lección, o la conversación tiene un cierre natural, el agente debe terminar la conversación (usando la herramiente correspondiente)
+Si es que el alumno quiere seguir a la siguiente lección, o la conversación tiene un cierre natural, el agente debe terminar la conversación (usando lo que tenga disponible).
+No deberá parar de responder por texto. Deberá cumplir el objetivo para seguir a la siguiente lección.
 Los angentes, en su completitud, deben seguir una conversasión natural. Los agentes deben considerar que es lo que se estudió y conversó previamente.
 Los mensajes deben ser cortos y amigables para alguien de 8 a 14 años.
 A pesar de ser amigables, deben ser claros y corregir cualquier error que el estudiante pueda tener.
