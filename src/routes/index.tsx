@@ -15,7 +15,7 @@ function HomeComponent() {
         <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
           <h1 className="text-4xl font-bold text-sky-950 mb-6">
-            La Fórmula Perfecta para que tus hijos aprueben en Matemáticas
+            La Fórmula Perfecta para que tus hijos aprendan Matemáticas
           </h1>
           <p className="text-sky-800 mb-8 mr-12">
             Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy, <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
