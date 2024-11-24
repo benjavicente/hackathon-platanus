@@ -7,7 +7,7 @@ export const Route = createFileRoute("/hijos/$lessonId/end")({
 function RouteComponent() {
   return (
     <div className="m-auto text-center">
-      <div className="text-2xl mb-2">Felizitaciones 🎉</div>
+      <div className="text-2xl mb-2">Felicitaciones 🎉</div>
       <Link
         from={Route.fullPath}
         to="/papas/$lessonId/resultados"
