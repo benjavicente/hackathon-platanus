@@ -1,0 +1,10 @@
+{
+  // nombre de su producto / solución
+  "project_name": "quompy.com",
+  // descripción de una frase y directa al grano de la solución
+  "oneliner": "health improvement with ai",
+  // url al logo de proyecto. mínimo 200x200, png. puede estar hosteado en el mismo repo.
+  "logo_url": "https://github.com/platanus-hack/team-7/blob/main/src/assets/icon.png",
+  // url para acceder a su app. si es apk u otro, link de descarga directa.
+  "app_url": "https://quompy.com",
+}
