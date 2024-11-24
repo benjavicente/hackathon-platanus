@@ -124,17 +124,38 @@ export const generateExercise = async ({
       Las respuestas son únicas y no se repiten.
       No hagas preguntas ambiguas. Por ejemplo: Es probable que llueva hoy"" es una pregunta invalida.
 
+      A continuación, diseña preguntas matemáticas claras, concisas e independientes entre sí, relacionadas con la temática de la lección y su objetivo. Considera las siguientes reglas:
+
+        Las preguntas deben ser independientes; no se relacionan entre sí.
+
+        No uses metapreguntas. Se debe responder directamente sin requerir la formulación de otras preguntas.
+
+        Las respuestas correctas son únicas y no se repiten.
+
+        Evita ambigüedades; cada pregunta debe tener una interpretación única.
+
 
       Los siguientes son ejemplos de preguntas válidas, no te enfoques en las tematicas, sino en la estructura de las preguntas:
       <example>
-      Question:
+      Pregunta:
       Si en un torneo de ajedrez hay 4 mesas y en cada mesa se juegan 2 partidas simultáneamente, ¿cuántas partidas se juegan en total?
 
-      Choices:
+      Opciones:
       ["6","8","4","10"]
 
-      Correct Option:
+      Opción Correcta:
       1
+      </example>
+
+      <example>
+      Pregunta:
+      Jesús mide 15 cm más que Luisa y 6 cm menos que Rocío. Si Jesús mide 152 cm, ¿cuánto miden Luisa y Rocío?
+
+      Opciones:
+      ["137 y 158", "140 y 158", "137 y 160", "140 y 160"]
+
+      Opción Correcta:
+      0
       </example>
 `,
   });

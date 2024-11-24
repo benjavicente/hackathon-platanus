@@ -1,10 +1,11 @@
 import { httpAction } from "./_generated/server";
 
 import { internal } from "./_generated/api";
-import { streamText } from "ai";
+import { streamText, tool } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { getModel } from "./ai";
 import { type Message } from "ai/react";
+import { z } from "zod";
 
 export const getMath = httpAction(async (ctx, request) => {
   const model = getModel("anthropic.claude-3-haiku-20240307-v1:0");
@@ -32,6 +33,15 @@ export const createExplanation = httpAction(async (ctx, request) => {
     messages: messages,
     onFinish: (messages) => {
       console.log("Guardar messages");
+    },
+    tools: {
+      getVisualization: tool({
+        description:
+          "Si el ejercicio tiene que ver con formulas mateticas, quiero que me devuelvas  un atributo aparte que sea solo la formula en Latex. Por ejemplo si te dicen 2+2, quiero que me devuelvas en sintaxis de latex.",
+        parameters: z.object({
+          latex: z.string(),
+        }),
+      }),
     },
   });
 

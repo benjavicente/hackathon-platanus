@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
+import icon from "@/assets/icon.png";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -9,21 +10,21 @@ function HomeComponent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
       {/* Hero Section */}
-      <header className="max-w-screen-xl mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
-        <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
-        <img src="./favicon.png" alt="quompy logo" className="h-20 -ml-4 mb-3" />
+      <header className="max-w-screen-lg mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
+        <div className="w-full lg:w-3/5 mb-10 lg:mb-0">
+        <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
           <h1 className="text-4xl font-bold text-sky-950 mb-6">
             La Fórmula Perfecta para que tus hijos aprueben en Matemáticas
           </h1>
-          <p className="text-sky-800 mb-8">
+          <p className="text-sky-800 mb-8 mr-12">
             Porque tener poco tiempo o no entender matemáticas ya no será un problema. Con quompy, <b>tú tienes el control</b> y tus hijos <i>tienen el aprendizaje</i>. 🚀🧠
           </p>
           <Link to="/onboarding" className="bg-sky-500 text-white font-bold py-4 px-8 rounded-lg hover:bg-sky-600 transition-colors hover:cursor-pointer">
             Empieza gratis ahora <span className="ml-2 text-lg">→</span>
           </Link>
         </div>
-        <div className="w-full lg:w-1/2 flex justify-center">
+        <div className="w-full lg:w-2/5 flex justify-center">
           <img src={hero} alt="Students learning" className="max-w-md w-full rounded-4xl" />
         </div>
       </header>
@@ -34,7 +35,7 @@ function HomeComponent() {
           <h2 className="text-2xl font-bold mb-10 text-center">¿Te identificas?</h2>
           <div className="flex flex-wrap gap-8 justify-center">
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm">
-              <p className="text-lg">"No sé cómo ayudar a mi hijo con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
+              <p className="text-lg">"No sé cómo ayudar a mi hija con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
             </div>
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm pt-10">
               <p className="text-lg">"No tengo tiempo para buscar ejercicios ni revisar cómo va su aprendizaje. 😥"</p>
@@ -46,7 +47,7 @@ function HomeComponent() {
       {/* Features Section */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
-          <img src="./favicon.png" alt="quompy logo" className="mx-auto h-20" />
+          <img src={icon} alt="quompy logo" className="mx-auto h-20" />
           <h2 className="text-3xl font-bold text-sky-950 mb-12 text-center">
             Quompy simplifica todo, para que tus hijos aprendan mejor
           </h2>
@@ -81,7 +82,7 @@ function HomeComponent() {
       {/* CTA Section */}
       <section className="bg-sky-100 py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-sky-950 mb-8">¡Dale una ventaja a tus hijos hoy mismo!</h2>
+          <h2 className="text-3xl font-bold text-sky-950 mb-8">¡Dales una ventaja académica hoy mismo!</h2>
           <div className="flex flex-wrap gap-4 justify-center mb-12">
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Genera ejercicios en segundos</span>
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Recupera tu tiempo</span>

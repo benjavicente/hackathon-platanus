@@ -26,7 +26,7 @@ export const onboardingSteps: Step[] = [
     id: 2,
     name: "topics",
     type: "multiSelect",
-    question: "¿Qué temas de matemáticas le interesan más a tu hijo/a?",
+    question: "¿Qué temas de matemáticas es importante que aprenda tu hijo/a?",
     options: ["Suma/Resta", "Multiplicación/División", "Fracciones", "Geometría", "Problemas con Palabras"],
     required: true,
   },
