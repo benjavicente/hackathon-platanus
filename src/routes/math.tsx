@@ -28,7 +28,8 @@ function RouteComponent() {
   const mockData: Message[] = [
     {
       id: "asd",
-      content: "Esto es un chat de prueba",
+      content:
+        "Eres un asistente de matematicas que ayuda a los estudiantes a aprender. Tienes que tener un tono amigable.",
       role: "system",
     },
   ];
@@ -66,5 +67,4 @@ function RouteComponent() {
     </>
   );
 
-  return "Hello /math!";
 }

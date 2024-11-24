@@ -79,8 +79,9 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
     }),
     prompt: `
         Crea una lección estructurada de matemáticas basada en la siguiente descripción proporcionada por un padre: ${parentContextDescription}.
+        Ten en consideración que las lecciones están dirigidas a un estudiante de educación básica en Chile.
 
-        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos de los siguientes tipos:
+        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos (debe incluir al menos 5 de tipo exercises) de los siguientes tipos:
         - **Explanation:** Debes proporcionar instrucciones para que otro agente genere una explicación simple y divertida del tema, personalizada según las necesidades e intereses del niño.
         - **Exercise:** Debes proporcionar instrucciones para que otro agente cree al menos tres problemas de práctica adaptados al nivel del niño, integrando elementos que se ajusten a sus intereses y desafíos.
 
@@ -93,7 +94,7 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
 
         Enfócate en garantizar que la estructura sea clara y atractiva. El **stepPrompt** debe actuar como un comando directo para otro agente, mientras que el **stepDescription** proporciona razonamiento y orientación para crear el paso de manera efectiva.
 
-        **Debes garantizar la alineación del contenido**, asegurándote de que cada paso construya sobre el anterior. Logra esto proporcionando el contexto y la orientación adecuados para cada paso.
+        **Debes garantizar la alineación dasel contenido**, asegurándote de que cada paso construya sobre el anterior. Logra esto proporcionando el contexto y la orientación adecuados para cada paso.
       `,
   });
 
@@ -117,13 +118,25 @@ export const generateExercise = async ({
       stepDescription +
       stepPrompt +
       `
-      **Example:**
-      - **Question:** ¿Cuánto es 2+2?
-      - **Options:**
-        [2, 10, 4, 5]
+      Finalmente, ten en consideración que las preguntas no pueden estar relacionadas entre sí y deben ser independientes.
+      Sin embargo, todas deben estar relacionadas a la temática de la lección y al objetivo de la misma. Asegúrate de que cada pregunta sea clara y concisa.
+      No hagas metapreguntas. Es decir, no hagas preguntas que requieran responder preguntas. Solo respuestas.
+      Las respuestas son únicas y no se repiten.
+      No hagas preguntas ambiguas. Por ejemplo: Es probable que llueva hoy"" es una pregunta invalida.
 
-      - **Correct Option:** 3
-    `,
+
+      Los siguientes son ejemplos de preguntas válidas, no te enfoques en las tematicas, sino en la estructura de las preguntas:
+      <example>
+      Question:
+      Si en un torneo de ajedrez hay 4 mesas y en cada mesa se juegan 2 partidas simultáneamente, ¿cuántas partidas se juegan en total?
+
+      Choices:
+      ["6","8","4","10"]
+
+      Correct Option:
+      1
+      </example>
+`,
   });
 
   if (!object) throw Error("No object in result");

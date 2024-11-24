@@ -29,6 +29,21 @@ function RouteComponent() {
   const nextActivityIndex = lesson.steps.findIndex((step) => step._id === lessonStepId) + 1;
   const nextActivity = lesson.steps.at(nextActivityIndex);
 
+  const navigate = Route.useNavigate();
+  const markAsDone = useConvexMutation(api.steps.markAsDone);
+  const markAsDoneMutation = useMutation({
+    mutationFn: async (event: any) => {
+      await markAsDone({ stepId: lessonStepId });
+    },
+    onSuccess: async () => {
+      if (nextActivity) {
+        return navigate({ to: Route.fullPath, params: { lessonStepId: nextActivity._id }, search: { pregunta: 0 } });
+      } else {
+        return navigate({ to: "../end" });
+      }
+    },
+  });
+
   const answerMutation = useConvexMutation(api.steps.makeAnswer);
   const sendAnswer = useMutation({
     mutationFn: async (valueIndex: number) => {
@@ -46,23 +61,16 @@ function RouteComponent() {
     },
   });
 
+  const endStep = null;
+
   if (state.type === "explanation") {
     return (
       <>
         <div>Aqui va un chat</div>
         {nextActivity ? (
-          <Link
-            from={Route.fullPath}
-            to={Route.fullPath}
-            params={{ lessonStepId: nextActivity._id }}
-            search={{ pregunta: undefined }}
-          >
-            Siguiente actividad
-          </Link>
+          <button onClick={markAsDoneMutation.mutate}>Siguiente actividad</button>
         ) : (
-          <Link from={Route.fullPath} to="/hijos/$lessonId/end">
-            Terminar leccion
-          </Link>
+          <button onClick={markAsDoneMutation.mutate}>Terminar leccion</button>
         )}
       </>
     );
@@ -82,7 +90,7 @@ function RouteComponent() {
         ) : actualQuestion.isCorrect === null ? (
           actualQuestion.options.map((option, index) => {
             return (
-              <div className="col-span-1">
+              <div key={index} className="col-span-1">
                 <button
                   className="bg-gray-50 hover:outline-gray-200  hover:outline w-full hover:cursor-pointer text-4xl transform transition hover:scale-115 py-2l"
                   onClick={() => sendAnswer.mutate(index)}
@@ -97,18 +105,9 @@ function RouteComponent() {
             {actualQuestion.isCorrect ? <h1>Correcto</h1> : <h1>Incorrecto</h1>}
             {pregunta === state.questionsStates.length - 1 ? (
               nextActivity ? (
-                <Link
-                  from={Route.fullPath}
-                  to={Route.fullPath}
-                  params={{ lessonStepId: nextActivity._id }}
-                  search={{ pregunta: undefined }}
-                >
-                  Siguiente actividad
-                </Link>
+                <button onClick={markAsDoneMutation.mutate}>Siguiente actividad</button>
               ) : (
-                <Link from={Route.fullPath} to="/hijos/$lessonId/end">
-                  Terminar leccion
-                </Link>
+                <button onClick={markAsDoneMutation.mutate}>Terminar leccion</button>
               )
             ) : (
               <Link from={Route.fullPath} to={Route.fullPath} search={{ pregunta: pregunta + 1 }}>

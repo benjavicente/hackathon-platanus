@@ -1,4 +1,4 @@
-export type StepType = 'multiChoice' | 'textInput' | 'multiSelect' | 'rangeSelect';
+export type StepType = "multiChoice" | "textInput" | "multiSelect" | "rangeSelect";
 
 export interface Step {
   id: number;
@@ -15,39 +15,39 @@ export interface Step {
 export const onboardingSteps: Step[] = [
   {
     id: 1,
-    name: 'gradeLevel',
-    type: 'multiChoice',
+    name: "gradeLevel",
+    type: "multiChoice",
     question: "¿En qué curso está tu hijo/a?",
     description: "Esto nos ayuda a personalizar las lecciones de matemáticas",
-    options: ['1° Básico', '2° Básico', '3° Básico', '4° Básico', '5° Básico', '6° Básico'],
-    required: true
+    options: ["1° Básico", "2° Básico", "3° Básico", "4° Básico", "5° Básico", "6° Básico"],
+    required: true,
   },
   {
     id: 2,
-    name: 'topics', 
-    type: 'multiSelect',
+    name: "topics",
+    type: "multiSelect",
     question: "¿Qué temas de matemáticas le interesan más a tu hijo/a?",
-    options: ['Suma/Resta', 'Multiplicación/División', 'Fracciones', 'Geometría', 'Problemas con Palabras'],
-    required: true
+    options: ["Suma/Resta", "Multiplicación/División", "Fracciones", "Geometría", "Problemas con Palabras"],
+    required: true,
   },
   {
     id: 3,
-    name: 'interests',
-    type: 'textInput', 
+    name: "interests",
+    type: "textInput",
     question: "¿Tu hijo/a tiene algún interés o pasatiempo especial?",
     description: "Usaremos esto para personalizar su experiencia",
     validation: (value: string) => value.length >= 2,
     required: true,
-    placeholder: "ej: dinosaurios, espacio, deportes"
+    placeholder: "ej: dinosaurios, espacio, deportes",
   },
   {
     id: 4,
-    name: 'childName',
-    type: 'textInput',
+    name: "childName",
+    type: "textInput",
     question: "¿Cómo se llama tu hijo/a?",
     description: "Usaremos esto para personalizar su experiencia",
     validation: (value: string) => value.length >= 2,
     required: true,
-    placeholder: "Ingresa el nombre de tu hijo/a"
-  }
+    placeholder: "Ingresa el nombre de tu hijo/a",
+  },
 ];

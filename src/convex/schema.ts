@@ -45,6 +45,7 @@ const schema = defineSchema({
     lessonGoalDescription: v.optional(v.string()),
     createScheduledId: v.optional(v.id("_scheduled_functions")),
     ready: v.boolean(),
+    completed: v.boolean(),
     stepGoalId: v.optional(v.id("lessonSteps")),
     currentStepId: v.optional(v.id("lessonSteps")),
   }),

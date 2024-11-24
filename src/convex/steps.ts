@@ -77,3 +77,33 @@ export const get = query({
     }
   },
 });
+
+export const markAsDone = mutation({
+  args: {
+    stepId: v.id("lessonSteps"),
+  },
+  handler: async (ctx, { stepId }) => {
+    const step = await ctx.db.get(stepId);
+    if (!step) throw new Error("Step not found");
+    const lesson = await ctx.db.get(step.lessonId);
+    if (!lesson) throw new Error("Lesson not found");
+
+    await ctx.db.patch(stepId, { completed: true });
+
+    let stepGoalId = lesson.stepGoalId;
+    if (stepGoalId === stepId) {
+      await ctx.db.patch(lesson._id, { completed: true });
+      return;
+    }
+
+    while (stepGoalId) {
+      const stepGoal = await ctx.db.get(stepGoalId);
+      if (!stepGoal) break;
+      if (stepGoal._id === stepId) {
+        await ctx.db.patch(lesson._id, { currentStepId: stepGoalId });
+        break;
+      }
+      stepGoalId = stepGoal.nextStepId;
+    }
+  },
+});

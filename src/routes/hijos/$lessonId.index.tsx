@@ -13,6 +13,17 @@ function RouteComponent() {
   const { lessonId } = Route.useParams();
   const { data: lesson } = useSuspenseQuery(convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }));
 
+  if (lesson.completed) {
+    return (
+      <>
+        <div className="grow flex flex-col items-center justify-center">Ya terminaste esta lección</div>
+        <Link to="/hijos" className="bg-sky-600 p-2 rounded text-white text-center">
+          Volver
+        </Link>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="grow flex flex-col">

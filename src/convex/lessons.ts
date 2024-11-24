@@ -20,6 +20,7 @@ export const create = mutation({
     const lessonId = await ctx.db.insert("lessons", {
       name: name,
       ready: false,
+      completed: false,
     });
     const createScheduledId = await ctx.scheduler.runAfter(0, internal.lessons.buildLessonWithAI, {
       lessonId,
