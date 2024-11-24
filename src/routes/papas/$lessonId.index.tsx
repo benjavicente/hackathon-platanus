@@ -3,9 +3,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
+import { queryClient } from "@/client";
 
 export const Route = createFileRoute("/papas/$lessonId/")({
   component: RouteComponent,
+  loader: async ({ params: { lessonId } }) => {
+    await queryClient.ensureQueryData(convexQuery(api.lessons.get, { id: lessonId }));
+  },
 });
 
 const thinkingMessages = [
@@ -65,6 +69,4 @@ function RouteComponent() {
       ) : null}
     </div>
   );
-
-  return "Hello /papas/$lessonId!";
 }

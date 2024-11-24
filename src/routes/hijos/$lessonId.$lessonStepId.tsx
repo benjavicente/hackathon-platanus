@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Fragment } from "react";
 import InfiniteNumberLine from "@/components/math/InfiniteNumberLine";
 import MatterStepOne from "@/components/hijos/MatterStepOne";
+import { queryClient } from "@/client";
 
 const lessonStepSchema = z.object({
   pregunta: z.optional(z.number()).default(0),
@@ -19,6 +20,9 @@ export const Route = createFileRoute("/hijos/$lessonId/$lessonStepId")({
   validateSearch: zodValidator(lessonStepSchema),
   parseParams: ({ lessonStepId }) => {
     return { lessonStepId: lessonStepId as Id<"lessonSteps"> };
+  },
+  loader: async ({ params: { lessonStepId } }) => {
+    await queryClient.ensureQueryData(convexQuery(api.steps.get, { stepId: lessonStepId }));
   },
 });
 
@@ -35,7 +39,7 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const markAsDone = useConvexMutation(api.steps.markAsDone);
   const markAsDoneMutation = useMutation({
-    mutationFn: async (event: any) => {
+    mutationFn: async (event?: any) => {
       await markAsDone({ stepId: lessonStepId });
     },
     onSuccess: async () => {
@@ -164,7 +168,7 @@ function AIChat({
 }: {
   messages: Message[];
   id: string;
-  endActivityCallback: () => void;
+  endActivityCallback: () => any;
   endActivityMessage: string;
 }) {
   const { messages, input, handleInputChange, handleSubmit } = useChat({

@@ -3,8 +3,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/convex/_generated/api";
+import { queryClient } from "@/client";
 
 export const Route = createFileRoute("/papas/$lessonId/resultados")({
+  loader: async ({ params: { lessonId } }) => {
+    await queryClient.ensureQueryData(convexQuery(api.lessons.results, { lessonId }));
+  },
   component: RouteComponent,
 });
 

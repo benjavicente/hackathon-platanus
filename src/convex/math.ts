@@ -8,6 +8,7 @@ import { type Message } from "ai/react";
 import { z } from "zod";
 import { countNumberPrompt } from "@/math/constants/math";
 import { PLOTS, PLOT_PROMPT } from "@/math/constants/plots";
+import { MOVEMENT_PROMPT } from "@/math/constants/movement";
 
 export const getMath = httpAction(async (ctx, request) => {
   const model = getModel("anthropic.claude-3-haiku-20240307-v1:0");
@@ -72,7 +73,9 @@ export const createExplanation = httpAction(async (ctx, request) => {
         },
       }),
       createSVG: tool({
-        description: "Crea un SVG, que puede ser usado para visualizar cualquier cosa",
+        description: `Usa esta herramienta cuando te pidan crear un SVG, que puede ser usado para visualizar cualquier cosa.
+        Esta herramienta debe ser utilizanda cuando te digan el concepto de ILUSTRAR.
+        O tambien es valido dibujar. Por ejemplo: si te dicen DIBUJAME UN CIRCULO AZUL, tu corres esta herramienta`,
         parameters: z
           .object({ svg: z.array(svgShapeSchema), height: z.number(), width: z.number() })
           .describe("Objeto de SVG. Lo puedes usar para dibujar cualquier cosa, usando circulos, rectangulos o lineas"),
@@ -84,7 +87,7 @@ export const createExplanation = httpAction(async (ctx, request) => {
         },
       }),
       showCatapult: tool({
-        description: "Muestra un dibujo de un catapulta",
+        description: MOVEMENT_PROMPT,
         parameters: z.object({}),
         execute: async (props) => {
           return {

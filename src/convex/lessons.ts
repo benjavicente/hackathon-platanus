@@ -7,7 +7,7 @@ import { lessonStepContextSchema } from "./schema";
 
 export const list = query({
   handler: async (ctx) => {
-    return ctx.db.query("lessons").collect();
+    return ctx.db.query("lessons").order("desc").collect();
   },
 });
 
