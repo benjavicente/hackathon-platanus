@@ -33,7 +33,7 @@ function RouteComponent() {
     },
   ];
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/getMath",
+    api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/explain",
     body: {
       chatId,
     },

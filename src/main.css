@@ -6,7 +6,7 @@
 :root {
   --font-display: "Sniglet", "sans-serif";
   --font-heading: "Fraunces", "serif";
-  --brand-color: #3903b6;
+  --brand-color: var(--color-sky-600);
 }
 
 h1,
@@ -27,8 +27,13 @@ h6 {
   #app {
     height: 100%;
   }
-}
-
-body {
-  font-family: var(--font-display);
+  :root {
+    min-height: 0;
+    min-width: 0;
+  }
+  body {
+    font-family: var(--font-display);
+    background: var(--color-sky-100);
+    color: var(--color-sky-950);
+  }
 }

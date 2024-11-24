@@ -12,17 +12,17 @@ function RouteComponent() {
 
   return (
     <>
-      <h1>Tus lecciones</h1>
-      <div className="flex flex-col gap-2 overflow-y-auto">
+      <h1 className="text-center py-6">Tus lecciones</h1>
+      <div className="flex flex-col gap-2 overflow-y-auto h-full">
         {lessons.map((lesson) => (
           <Link
             key={lesson._id}
             from={Route.fullPath}
             to="./$lessonId"
             params={{ lessonId: lesson._id }}
-            className="bg-gray-200"
+            className="bg-white p-2 rounded shadow-sky-100 shadow"
           >
-            {lesson.lessonGoalDescription}
+            {lesson.name} -{lesson.lessonGoalDescription}
           </Link>
         ))}
       </div>

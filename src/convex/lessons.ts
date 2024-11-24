@@ -68,6 +68,7 @@ export const createSteps = internalMutation({
         type: stepParams.stepType,
         previousStep: lastStepId,
         lessonId,
+        completed: false,
       });
       const scheduled = await ctx.scheduler.runAfter(i, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
       i += 1;

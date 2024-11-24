@@ -15,22 +15,24 @@ export const makeAnswer = mutation({
     if (!step.contextId) throw new Error("No context found");
     const context = await ctx.db.get(step.contextId);
     if (!context) throw new Error("Context not found");
-
     const state = await ctx.db
       .query("lessonStepsState")
       .withIndex("by_stepid", (q) => q.eq("stepId", stepId))
       .unique();
+    if (!state) throw new Error("State does not exist");
 
-    if (!state) {
-      throw new Error("State does not exist");
-    }
+    if (state.type === "choice" && context.type === "exercise") {
+      if (choice.index !== state.responses.length) {
+        throw new Error(`Invalid choice: invalid index: ${choice.index} ${state.responses.length}`);
+      }
 
-    if (choice.index !== state.responses.length) {
-      console.log(choice.index, state.responses.length);
-      throw new Error("Invalid choice: invalid index");
+      const newResponse = [...state.responses, choice.value];
+      await ctx.db.patch(state._id, { responses: newResponse });
+
+      return choice.value === context.questions[choice.index].correctOption;
+    } else {
+      throw new Error("Invalid state");
     }
-    const newResponse = [...state.responses, choice.value];
-    await ctx.db.patch(state._id, { responses: newResponse });
   },
 });
 
@@ -54,6 +56,7 @@ export const get = query({
 
     if (context.type === "exercise") {
       return {
+        type: "exercise",
         questionsStates: context.questions.map((question, index) => {
           console.log(state.responses.length, index, state.responses[index] === question.correctOption);
           return {
@@ -63,7 +66,12 @@ export const get = query({
             isCorrect: index >= state.responses.length ? null : state.responses[index] === question.correctOption,
           };
         }),
-      };
+      } as const;
+    } else if (context.type === "explanation") {
+      return {
+        type: "explanation",
+        messages: [],
+      } as const;
     } else {
       throw new Error("Invalid context type");
     }

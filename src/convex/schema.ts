@@ -6,6 +6,7 @@ const commonLessonStepSchema = {
   contextId: v.optional(v.id("lessonStepContext")),
   previousStep: v.optional(v.id("lessonSteps")),
   scheduledCreateId: v.optional(v.id("_scheduled_functions")),
+  completed: v.boolean(),
 };
 const lessonStepSchema = v.union(
   v.object({

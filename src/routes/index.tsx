@@ -12,29 +12,13 @@ function HomeComponent() {
   const { data: lessons } = useSuspenseQuery(convexQuery(api.lessons.list, {}));
 
   return (
-    <div className="p-2">
-      <h3>Lecciones que tienes</h3>
-      {lessons.map((lesson) => (
-        <div key={lesson._id} className="p-2 border-b">
-          <div>{lesson.lessonGoalDescription}</div>
-
-          <Link
-            from={Route.fullPath}
-            to="./lecciones/$lessonId"
-            params={{ lessonId: lesson._id }}
-          >
-            Ir a la lección
-          </Link>
-        </div>
-      ))}
-      <button onClick={() => playSound()}>Play sound</button>
+    <div className="p-2 flex flex-col mx-auto max-w-64 items-center justify-center h-full gap-2">
+      <Link className="bg-sky-50 w-full p-4 text-center rounded shadow-sky-200 shadow" to="/papas">
+        Página papás
+      </Link>
+      <Link className="bg-sky-50 w-full p-4 text-center rounded shadow-sky-200 shadow" to="/hijos">
+        Página hijos
+      </Link>
     </div>
   );
-}
-
-import correctSound from "../assets/duolingo-correct.mp3";
-
-async function playSound() {
-  const audio = new Audio(correctSound);
-  await audio.play();
 }
