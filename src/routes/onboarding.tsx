@@ -7,6 +7,7 @@ import { onboardingSteps } from '../components/onboarding/steps';
 import { MultiSelectStep } from '../components/onboarding/multiSelectStep';
 import { TextInputStep } from '../components/onboarding/textInputStep';
 import { FinalStep } from '../components/onboarding/finalStep';
+import icon from "@/assets/icon.png";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingComponent,
@@ -35,6 +36,7 @@ function OnboardingComponent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <img src={icon} alt="quompy logo" className="h-20 mx-auto" />
       <div className="max-w-2xl w-full bg-white p-8 rounded-xl shadow-lg">
         <StepProgress />
         <div className="mt-8">

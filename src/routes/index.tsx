@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
-import favicon from "@/favicon.png";
+import icon from "@/assets/icon.png";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -12,7 +12,7 @@ function HomeComponent() {
       {/* Hero Section */}
       <header className="max-w-screen-xl mx-auto px-4 py-20 flex flex-wrap items-center justify-between">
         <div className="w-full lg:w-1/2 mb-10 lg:mb-0">
-        <img src={favicon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
+        <img src={icon} alt="quompy logo" className="h-20 -ml-4 mb-3" />
 
           <h1 className="text-4xl font-bold text-sky-950 mb-6">
             La Fórmula Perfecta para que tus hijos aprueben en Matemáticas
@@ -47,7 +47,7 @@ function HomeComponent() {
       {/* Features Section */}
       <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
-          <img src={favicon} alt="quompy logo" className="mx-auto h-20" />
+          <img src={icon} alt="quompy logo" className="mx-auto h-20" />
           <h2 className="text-3xl font-bold text-sky-950 mb-12 text-center">
             Quompy simplifica todo, para que tus hijos aprendan mejor
           </h2>
