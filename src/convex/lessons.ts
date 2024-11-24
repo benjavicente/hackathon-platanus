@@ -4,7 +4,6 @@ import { internal } from "./_generated/api";
 import { Id, Doc } from "./_generated/dataModel";
 import { generateExercise, generateExplanation, generateLessonPlan } from "./ai";
 import { lessonStepContextSchema } from "./schema";
-import { last } from "node_modules/@tanstack/react-router/dist/esm/utils";
 
 export const list = query({
   handler: async (ctx) => {
