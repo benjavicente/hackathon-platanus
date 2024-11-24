@@ -44,13 +44,16 @@ function RouteComponent() {
     onFinish: () => {
       console.log(messages);
     },
+    onToolCall: (tool) => {
+      console.log(tool);
+    },
   });
 
   return (
     <Fragment key="form-container-math">
       <h1>Math</h1>
       {/* <InfiniteNumberLineSchema />
-      <MultiplicationBlocks /> */}
+      InfiniteNumberLine<MultiplicationBlocks /> */}
       <div>
         {messages.map((message) => (
           <Fragment key={message.id}>
@@ -62,6 +65,10 @@ function RouteComponent() {
 
               if (tool.toolName === "getInfiniteNumber") {
                 return <InfiniteNumberLineSchema key={tool.toolCallId} />;
+              }
+
+              if (tool.toolName === "createPlot") {
+                return <div>createPlot</div>;
               }
             })}
           </Fragment>

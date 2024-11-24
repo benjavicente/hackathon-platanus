@@ -53,7 +53,6 @@ export const createSteps = internalMutation({
     steps: v.array(
       v.object({
         stepPrompt: v.string(),
-        stepDescription: v.string(),
         stepType: v.union(v.literal("explanation"), v.literal("exercise")),
         stepTitle: v.string(),
       }),
@@ -96,17 +95,16 @@ export const createSteps = internalMutation({
 export const buildStepWithAI = internalAction({
   args: {
     stepPrompt: v.string(),
-    stepDescription: v.string(),
     stepType: v.union(v.literal("explanation"), v.literal("exercise")),
     stepId: v.id("lessonSteps"),
   },
-  handler: async (ctx, { stepId, stepPrompt, stepDescription, stepType }) => {
+  handler: async (ctx, { stepId, stepPrompt, stepType }) => {
     let result: Infer<typeof lessonStepContextSchema>;
     if (stepType === "exercise") {
-      const data = await generateExercise({ stepPrompt, stepDescription });
+      const data = await generateExercise({ stepPrompt });
       result = { ...data, type: "exercise" };
     } else if (stepType === "explanation") {
-      const data = await generateExplanation({ stepPrompt, stepDescription });
+      const data = await generateExplanation({ stepPrompt });
       result = { ...data, type: "explanation" };
     } else {
       throw new Error("Invalid step type");

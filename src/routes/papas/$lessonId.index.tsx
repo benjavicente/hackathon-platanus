@@ -44,7 +44,7 @@ function RouteComponent() {
   return (
     <div className="max-w-120 mx-auto w-full">
       <h1 className="text-sky-800 my-4 text-2xl">Creando lección para {lesson.name}</h1>
-      <div>{lesson.createScheduled!.state.kind !== "success" ? getMsgByString(lesson.createScheduledId) : null}</div>
+      <div>{lesson.createScheduled!.state.kind !== "success" ? getMsgByString(lesson.createScheduledId!) : null}</div>
       {lesson.lessonGoalDescription ? <p>{lesson.lessonGoalDescription}</p> : null}
       <ul className="flex flex-col gap-2 py-4">
         {lesson.steps.map((step, i) => (

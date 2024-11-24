@@ -1,5 +1,5 @@
-import { useRef, useLayoutEfect } from "react";
-import { createFileRoute, Link, useLayoutEffect } from "@tanstack/react-router";
+import { useRef, useLayoutEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "@/convex/_generated/api";
@@ -8,6 +8,7 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { Fragment } from "react";
 import InfiniteNumberLine from "@/components/math/InfiniteNumberLine";
+import MatterStepOne from "@/components/hijos/MatterStepOne";
 
 const lessonStepSchema = z.object({
   pregunta: z.optional(z.number()).default(0),
@@ -166,12 +167,15 @@ function AIChat({
   endActivityCallback: () => void;
   endActivityMessage: string;
 }) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: import.meta.env.VITE_CONVEX_URL.replace(".cloud", ".site") + "/explain",
     initialMessages: initialMessages,
     id,
     onFinish: () => {
       console.log(messages);
+    },
+    onToolCall: (tool) => {
+      console.log(tool);
     },
   });
 
@@ -186,22 +190,42 @@ function AIChat({
                 <Markdown text={message.content} key={message.id} />
               </div>
             ) : null}
-            {message.toolInvocations?.map((tool) => {
-              if (tool.toolName === "showNextActivityButton") {
-                return (
+            {message.toolInvocations?.map((tool) => (
+              <div>
+                {JSON.stringify(tool)}
+                {tool.toolName === "showNextActivityButton" ? (
                   <button
                     key={tool.toolCallId}
                     onClick={endActivityCallback}
-                    className="bg-sky-500 text-white px-2 rounded-xs w-full"
+                    className="bg-sky-500 text-white px-2 rounded-xs w-full shrink"
                   >
                     {endActivityMessage}
                   </button>
-                );
-              }
-              if (tool.toolName === "getInfiniteNumber") {
-                return <InfiniteNumberLine key={tool.toolCallId} />;
-              }
-            })}
+                ) : tool.toolName === "getInfiniteNumber" ? (
+                  <div>
+                    "Esta es una manera de visualizar que tan grande es el infinito"
+                    <InfiniteNumberLine key={tool.toolCallId} />;
+                  </div>
+                ) : tool.toolName === "createPlot" ? (
+                  tool.args.figure === "CIRCLE" ? (
+                    <CirclePlot key={tool.toolCallId} />
+                  ) : tool.args.figure === "ELLIPSE" ? (
+                    <EllipsePlot key={tool.toolCallId} />
+                  ) : null
+                ) : tool.toolName === "createSVG" ? (
+                  <svg
+                    key={tool.toolCallId}
+                    width={tool.args.width}
+                    height={tool.args.height}
+                    className="w-full max-h-64 object-contain"
+                  >
+                    {tool.args.svg.map((svg) => (
+                      <ShapeRenderer key={tool.toolCallId} shape={svg} />
+                    ))}
+                  </svg>
+                ) : null}
+              </div>
+            ))}
           </Fragment>
         ))}
       </div>
@@ -213,11 +237,11 @@ function AIChat({
           placeholder="Escribe un mensaje"
           className="grow border border-sky-600 px-2 bg-white round-xs"
         />
-
         <button type="submit" className="bg-sky-500 text-white px-2 rounded-xs">
           Enviar
         </button>
       </form>
+      <MatterStepOne />
     </Fragment>
   );
 }
@@ -233,7 +257,9 @@ async function playCorrectSound() {
 }
 
 import MarkdownIt from "markdown-it";
+
 import markdownItKatex from "@vscode/markdown-it-katex";
+import { CirclePlot, EllipsePlot } from "@/components/math/Plot";
 function Markdown({ text }: { text: string }) {
   const divRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -263,3 +289,48 @@ async function playIncorrectSound() {
   const audio = new Audio(wrongSound);
   await audio.play();
 }
+
+import { svgShapeSchema } from "../../convex/maths";
+
+type SvgShape = z.infer<typeof svgShapeSchema>;
+
+const ShapeRenderer: React.FC<{ shape: SvgShape }> = ({ shape }) => {
+  switch (shape.type) {
+    case "circle":
+      return (
+        <circle
+          cx={shape.cx}
+          cy={shape.cy}
+          r={shape.r}
+          fill={shape.fill}
+          stroke={shape.stroke}
+          strokeWidth={shape.strokeWidth}
+        />
+      );
+    case "rectangle":
+      return (
+        <rect
+          x={shape.x}
+          y={shape.y}
+          width={shape.width}
+          height={shape.height}
+          fill={shape.fill}
+          stroke={shape.stroke}
+          strokeWidth={shape.strokeWidth}
+        />
+      );
+    case "line":
+      return (
+        <line
+          x1={shape.x1}
+          y1={shape.y1}
+          x2={shape.x2}
+          y2={shape.y2}
+          stroke={shape.stroke}
+          strokeWidth={shape.strokeWidth}
+        />
+      );
+    default:
+      return null;
+  }
+};

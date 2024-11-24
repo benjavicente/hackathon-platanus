@@ -7,6 +7,7 @@ import { getModel } from "./ai";
 import { type Message } from "ai/react";
 import { z } from "zod";
 import { countNumberPrompt } from "@/math/constants/math";
+import { PLOTS, PLOT_PROMPT } from "@/math/constants/plots";
 
 export const getMath = httpAction(async (ctx, request) => {
   const model = getModel("anthropic.claude-3-haiku-20240307-v1:0");
@@ -33,23 +34,18 @@ export const createExplanation = httpAction(async (ctx, request) => {
     model: model,
     messages: messages,
     onFinish: (messages) => {
-      console.log("Guardar messages");
+      console.log("Guardar messages", messages);
     },
     toolChoice: "auto",
     tools: {
       getInfiniteNumber: tool({
-        description: "Usa esta herramienta cuando quieras explicar que es infinito",
-        parameters: z.object({
-          description: z.string(),
-        }),
+        description:
+          "Usa esta herramienta para mostrar una visualización del infinito, puedes utilizarla como parte de una explicación",
+        parameters: z.object({}),
         execute: async (props) => {
-          return {
-            type: "getInfiniteNumber",
-            description: props.description,
-          };
+          return {};
         },
       }),
-
       showNextActivityButton: tool({
         description: `Usa esta herramienta para mostrar el boton para ir a la proxima actividad.
            Debes mostrarlo cuando el estudiante haya comprendido el tema que le estas enseñando
@@ -58,6 +54,32 @@ export const createExplanation = httpAction(async (ctx, request) => {
         execute: async (props) => {
           return {
             type: "showNextActivityButton",
+          };
+        },
+      }),
+      createPlot: tool({
+        description: PLOT_PROMPT,
+        parameters: z.object({
+          figure: z
+            .enum(PLOTS)
+            .describe("Esto representa la forma geometrica. Puede ser un cuadrado circulo o triangulo."),
+        }),
+        execute: async (props) => {
+          return {
+            type: "createPlot",
+            figure: props.figure,
+          };
+        },
+      }),
+      createSVG: tool({
+        description: "Crea un SVG, que puede ser usado para visualizar cualquier cosa",
+        parameters: z
+          .object({ svg: z.array(svgShapeSchema), height: z.number(), width: z.number() })
+          .describe("Objeto de SVG. Lo puedes usar para dibujar cualquier cosa, usando circulos, rectangulos o lineas"),
+        execute: async (props) => {
+          return {
+            type: "svg",
+            svg: props,
           };
         },
       }),
@@ -73,3 +95,36 @@ export const createExplanation = httpAction(async (ctx, request) => {
     },
   });
 });
+
+const baseShapeSchema = z.object({
+  type: z.string(),
+  fill: z.string().optional(),
+  stroke: z.string().optional(),
+  strokeWidth: z.number().optional(),
+});
+
+// Define specific shape schemas
+const circleSchema = baseShapeSchema.extend({
+  type: z.literal("circle"),
+  cx: z.number(),
+  cy: z.number(),
+  r: z.number(),
+});
+
+const rectangleSchema = baseShapeSchema.extend({
+  type: z.literal("rectangle"),
+  x: z.number(),
+  y: z.number(),
+  width: z.number(),
+  height: z.number(),
+});
+
+const lineSchema = baseShapeSchema.extend({
+  type: z.literal("line"),
+  x1: z.number(),
+  y1: z.number(),
+  x2: z.number(),
+  y2: z.number(),
+});
+
+export const svgShapeSchema = z.discriminatedUnion("type", [circleSchema, rectangleSchema, lineSchema]);
