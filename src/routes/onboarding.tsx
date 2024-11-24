@@ -1,10 +1,87 @@
-import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { useAtom } from 'jotai';
+import { onboardingAtom } from '../components/onboarding/atoms';
+import { StepProgress } from '../components/onboarding/stepProgress';
+import { MultiChoiceStep } from '../components/onboarding/multiChoiceStep';
+import { onboardingSteps } from '../components/onboarding/steps';
+import { MultiSelectStep } from '../components/onboarding/multiSelectStep';
+import { RangeSelectStep } from '../components/onboarding/rangeSelectStep';
+import { TextInputStep } from '../components/onboarding/textInputStep';
+import { FinalStep } from '../components/onboarding/finalStep';
 
-export const Route = createFileRoute('/onboarding')({
-  component: RouteComponent,
-})
+export const Route = createFileRoute("/onboarding")({
+  component: OnboardingComponent,
+});
 
-function RouteComponent() {
-  return 'Hello /onboarding!'
+function OnboardingComponent() {
+  const [onboardingData, setOnboardingData] = useAtom(onboardingAtom);
+  const currentStepData = onboardingSteps.find(
+    (step) => step.id === onboardingData.currentStep
+  );
+
+  const handleNext = (value: any) => {
+    setOnboardingData((prev) => ({
+      ...prev,
+      currentStep: prev.currentStep + 1,
+      [currentStepData?.type === 'multiChoice' ? 'gradeLevel' : 
+        currentStepData?.type === 'multiSelect' ? 'topics' : 
+        currentStepData?.type === 'rangeSelect' ? 'dailyMinutes' : 
+        'childName']: value
+    }));
+  };
+
+  const handleBack = () => {
+    setOnboardingData((prev) => ({
+      ...prev,
+      currentStep: Math.max(1, prev.currentStep - 1)
+    }));
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="max-w-2xl w-full bg-white p-8 rounded-xl shadow-lg">
+        <StepProgress />
+        <div className="mt-8">
+          {currentStepData ? (
+            <>
+              {currentStepData.type === 'multiChoice' && (
+                <MultiChoiceStep 
+                  stepData={currentStepData} 
+                  onNext={handleNext} 
+                />
+              )}
+              {currentStepData.type === 'multiSelect' && (
+                <MultiSelectStep 
+                  stepData={currentStepData} 
+                  onNext={handleNext} 
+                />
+              )}
+              {currentStepData.type === 'rangeSelect' && (
+                <RangeSelectStep 
+                  stepData={currentStepData} 
+                  onNext={handleNext} 
+                />
+              )}
+              {currentStepData.type === 'textInput' && (
+                <TextInputStep 
+                  stepData={currentStepData} 
+                  onNext={handleNext} 
+                />
+              )}
+              {onboardingData.currentStep > 1 && (
+                <button
+                  onClick={handleBack}
+                  className="mt-4 text-gray-600 hover:text-[var(--brand-color)]"
+                >
+                  ← Back
+                </button>
+              )}
+            </>
+          ) : (
+            <FinalStep />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
