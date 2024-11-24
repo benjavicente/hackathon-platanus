@@ -21,7 +21,7 @@ export const create = mutation({
       name: name,
       ready: false,
     });
-    const createScheduledId = await ctx.scheduler.runAfter(5, internal.lessons.buildLessonWithAI, {
+    const createScheduledId = await ctx.scheduler.runAfter(0, internal.lessons.buildLessonWithAI, {
       lessonId,
       parentContextDescription,
     });
@@ -70,7 +70,7 @@ export const createSteps = internalMutation({
         lessonId,
         completed: false,
       });
-      const scheduled = await ctx.scheduler.runAfter(i, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
+      const scheduled = await ctx.scheduler.runAfter(0, internal.lessons.buildStepWithAI, { ...stepParams, stepId });
       i += 1;
       await ctx.db.patch(stepId, { scheduledCreateId: scheduled });
       stepsIds.push(stepId);

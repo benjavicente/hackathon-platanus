@@ -24,6 +24,7 @@ import { Route as PapasLessonIdImport } from './routes/papas/$lessonId'
 import { Route as HijosLessonIdImport } from './routes/hijos/$lessonId'
 import { Route as LeccionesLessonIdIndexImport } from './routes/lecciones.$lessonId.index'
 import { Route as HijosLessonIdIndexImport } from './routes/hijos/$lessonId.index'
+import { Route as HijosLessonIdEndImport } from './routes/hijos/$lessonId.end'
 import { Route as HijosLessonIdLessonStepIdImport } from './routes/hijos/$lessonId.$lessonStepId'
 import { Route as LeccionesLessonIdPasoLessonStepIdImport } from './routes/lecciones.$lessonId.paso.$lessonStepId'
 
@@ -104,6 +105,12 @@ const LeccionesLessonIdIndexRoute = LeccionesLessonIdIndexImport.update({
 const HijosLessonIdIndexRoute = HijosLessonIdIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => HijosLessonIdRoute,
+} as any)
+
+const HijosLessonIdEndRoute = HijosLessonIdEndImport.update({
+  id: '/end',
+  path: '/end',
   getParentRoute: () => HijosLessonIdRoute,
 } as any)
 
@@ -208,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HijosLessonIdLessonStepIdImport
       parentRoute: typeof HijosLessonIdImport
     }
+    '/hijos/$lessonId/end': {
+      id: '/hijos/$lessonId/end'
+      path: '/end'
+      fullPath: '/hijos/$lessonId/end'
+      preLoaderRoute: typeof HijosLessonIdEndImport
+      parentRoute: typeof HijosLessonIdImport
+    }
     '/hijos/$lessonId/': {
       id: '/hijos/$lessonId/'
       path: '/'
@@ -236,11 +250,13 @@ declare module '@tanstack/react-router' {
 
 interface HijosLessonIdRouteChildren {
   HijosLessonIdLessonStepIdRoute: typeof HijosLessonIdLessonStepIdRoute
+  HijosLessonIdEndRoute: typeof HijosLessonIdEndRoute
   HijosLessonIdIndexRoute: typeof HijosLessonIdIndexRoute
 }
 
 const HijosLessonIdRouteChildren: HijosLessonIdRouteChildren = {
   HijosLessonIdLessonStepIdRoute: HijosLessonIdLessonStepIdRoute,
+  HijosLessonIdEndRoute: HijosLessonIdEndRoute,
   HijosLessonIdIndexRoute: HijosLessonIdIndexRoute,
 }
 
@@ -273,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/lecciones': typeof LeccionesIndexRoute
   '/papas': typeof PapasIndexRoute
   '/hijos/$lessonId/$lessonStepId': typeof HijosLessonIdLessonStepIdRoute
+  '/hijos/$lessonId/end': typeof HijosLessonIdEndRoute
   '/hijos/$lessonId/': typeof HijosLessonIdIndexRoute
   '/lecciones/$lessonId': typeof LeccionesLessonIdIndexRoute
   '/lecciones/$lessonId/paso/$lessonStepId': typeof LeccionesLessonIdPasoLessonStepIdRoute
@@ -289,6 +306,7 @@ export interface FileRoutesByTo {
   '/lecciones': typeof LeccionesIndexRoute
   '/papas': typeof PapasIndexRoute
   '/hijos/$lessonId/$lessonStepId': typeof HijosLessonIdLessonStepIdRoute
+  '/hijos/$lessonId/end': typeof HijosLessonIdEndRoute
   '/hijos/$lessonId': typeof HijosLessonIdIndexRoute
   '/lecciones/$lessonId': typeof LeccionesLessonIdIndexRoute
   '/lecciones/$lessonId/paso/$lessonStepId': typeof LeccionesLessonIdPasoLessonStepIdRoute
@@ -308,6 +326,7 @@ export interface FileRoutesById {
   '/lecciones/': typeof LeccionesIndexRoute
   '/papas/': typeof PapasIndexRoute
   '/hijos/$lessonId/$lessonStepId': typeof HijosLessonIdLessonStepIdRoute
+  '/hijos/$lessonId/end': typeof HijosLessonIdEndRoute
   '/hijos/$lessonId/': typeof HijosLessonIdIndexRoute
   '/lecciones/$lessonId/': typeof LeccionesLessonIdIndexRoute
   '/lecciones/$lessonId/paso/$lessonStepId': typeof LeccionesLessonIdPasoLessonStepIdRoute
@@ -328,6 +347,7 @@ export interface FileRouteTypes {
     | '/lecciones'
     | '/papas'
     | '/hijos/$lessonId/$lessonStepId'
+    | '/hijos/$lessonId/end'
     | '/hijos/$lessonId/'
     | '/lecciones/$lessonId'
     | '/lecciones/$lessonId/paso/$lessonStepId'
@@ -343,6 +363,7 @@ export interface FileRouteTypes {
     | '/lecciones'
     | '/papas'
     | '/hijos/$lessonId/$lessonStepId'
+    | '/hijos/$lessonId/end'
     | '/hijos/$lessonId'
     | '/lecciones/$lessonId'
     | '/lecciones/$lessonId/paso/$lessonStepId'
@@ -360,6 +381,7 @@ export interface FileRouteTypes {
     | '/lecciones/'
     | '/papas/'
     | '/hijos/$lessonId/$lessonStepId'
+    | '/hijos/$lessonId/end'
     | '/hijos/$lessonId/'
     | '/lecciones/$lessonId/'
     | '/lecciones/$lessonId/paso/$lessonStepId'
@@ -445,6 +467,7 @@ export const routeTree = rootRoute
       "parent": "/hijos",
       "children": [
         "/hijos/$lessonId/$lessonStepId",
+        "/hijos/$lessonId/end",
         "/hijos/$lessonId/"
       ]
     },
@@ -463,6 +486,10 @@ export const routeTree = rootRoute
     },
     "/hijos/$lessonId/$lessonStepId": {
       "filePath": "hijos/$lessonId.$lessonStepId.tsx",
+      "parent": "/hijos/$lessonId"
+    },
+    "/hijos/$lessonId/end": {
+      "filePath": "hijos/$lessonId.end.tsx",
       "parent": "/hijos/$lessonId"
     },
     "/hijos/$lessonId/": {

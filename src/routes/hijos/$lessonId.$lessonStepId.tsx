@@ -6,11 +6,11 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { cva } from "cva";
 
 const lessonStepSchema = z.object({
   pregunta: z.optional(z.number()).default(0),
 });
+
 export const Route = createFileRoute("/hijos/$lessonId/$lessonStepId")({
   component: RouteComponent,
   validateSearch: zodValidator(lessonStepSchema),
@@ -19,21 +19,15 @@ export const Route = createFileRoute("/hijos/$lessonId/$lessonStepId")({
   },
 });
 
-const progresStyles = cva({
-  base: "h-2 bg-gray-200 rounded-full",
-  variants: {
-    completed: {
-      true: "bg-sky-400",
-      false: "bg-sky-200",
-    },
-  },
-});
-
 function RouteComponent() {
   // getAnswers
   const { lessonId, lessonStepId } = Route.useParams();
   const { pregunta } = Route.useSearch();
   const { data: state } = useSuspenseQuery(convexQuery(api.steps.get, { stepId: lessonStepId }));
+  const { data: lesson } = useSuspenseQuery(convexQuery(api.lessons.get, { id: lessonId as Id<"lessons"> }));
+
+  const nextActivityIndex = lesson.steps.findIndex((step) => step._id === lessonStepId) + 1;
+  const nextActivity = lesson.steps.at(nextActivityIndex);
 
   const answerMutation = useConvexMutation(api.steps.makeAnswer);
   const sendAnswer = useMutation({
@@ -56,9 +50,20 @@ function RouteComponent() {
     return (
       <>
         <div>Aqui va un chat</div>
-        <Link from={Route.fullPath} to={Route.fullPath} search={{ pregunta: pregunta + 1 }}>
-          Siguiente
-        </Link>
+        {nextActivity ? (
+          <Link
+            from={Route.fullPath}
+            to={Route.fullPath}
+            params={{ lessonStepId: nextActivity._id }}
+            search={{ pregunta: undefined }}
+          >
+            Siguiente actividad
+          </Link>
+        ) : (
+          <Link from={Route.fullPath} to="/hijos/$lessonId/end">
+            Terminar leccion
+          </Link>
+        )}
       </>
     );
   }
@@ -90,9 +95,26 @@ function RouteComponent() {
         ) : (
           <div>
             {actualQuestion.isCorrect ? <h1>Correcto</h1> : <h1>Incorrecto</h1>}
-            <Link from={Route.fullPath} to={Route.fullPath} search={{ pregunta: pregunta + 1 }}>
-              Siguiente
-            </Link>
+            {pregunta === state.questionsStates.length - 1 ? (
+              nextActivity ? (
+                <Link
+                  from={Route.fullPath}
+                  to={Route.fullPath}
+                  params={{ lessonStepId: nextActivity._id }}
+                  search={{ pregunta: undefined }}
+                >
+                  Siguiente actividad
+                </Link>
+              ) : (
+                <Link from={Route.fullPath} to="/hijos/$lessonId/end">
+                  Terminar leccion
+                </Link>
+              )
+            ) : (
+              <Link from={Route.fullPath} to={Route.fullPath} search={{ pregunta: pregunta + 1 }}>
+                Siguiente pregunta
+              </Link>
+            )}
           </div>
         )}
       </div>
