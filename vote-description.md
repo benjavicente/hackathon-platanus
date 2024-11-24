@@ -40,7 +40,6 @@ Estamos participando en este hackathon para demostrar cómo la tecnología puede
 💡 **Vota por Quompy y sé parte del cambio educativo** 🚀
 
 🔗 [**Prueba nuestra plataforma aquí**](https://quompy.com)  
-🎯 **Déjanos tu apoyo votando en este link:** [VOTA AQUÍ](#coloca-el-link-para-votar)
 
 ---
 
