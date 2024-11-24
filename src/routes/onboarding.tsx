@@ -35,10 +35,10 @@ function OnboardingComponent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center  bg-gray-50 p-4">
+    <div className="min-h-screen flex flex-col items-center bg-sky-50 p-4">
       <Link to="/"><img src={icon} alt="quompy logo" className="h-20 mx-auto" /></Link>
       <section className="grow flex justify-center items-center">
-        <div className="max-w-2xl w-full bg-white p-8 rounded-xl shadow-lg">
+        <div className="max-w-2xl w-full bg-white p-8 rounded-2xl shadow-lg">
           { onboardingData.currentStep < onboardingSteps.length && <StepProgress />}
           <div className="">
             {currentStepData ? (
@@ -46,7 +46,7 @@ function OnboardingComponent() {
               {onboardingData.currentStep > 1 && (
                   <button
                     onClick={handleBack}
-                    className="mb-4 text-gray-600 hover:text-[var(--brand-color)]"
+                    className="mb-4 text-gray-600 hover:text-[var(--brand-color)] hover:cursor-pointer"
                   >
                     ← Volver
                   </button>

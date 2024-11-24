@@ -6,7 +6,7 @@ export function StepProgress() {
   const [{ currentStep }] = useAtom(onboardingAtom);
 
   return (
-    <div className="w-full py-4">
+    <div className="w-full">
       <div className="flex justify-between">
         {onboardingSteps.map((step) => (
           <div

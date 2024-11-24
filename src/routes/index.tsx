@@ -35,7 +35,7 @@ function HomeComponent() {
           <h2 className="text-2xl font-bold mb-10 text-center">¿Te identificas?</h2>
           <div className="flex flex-wrap gap-8 justify-center">
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm">
-              <p className="text-lg">"No sé cómo ayudar a mi hijo con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
+              <p className="text-lg">"No sé cómo ayudar a mi hija con sus tareas de matemáticas... ¡es demasiado complicado! 😰"</p>
             </div>
             <div className="bg-sky-800 p-8 rounded-lg max-w-sm pt-10">
               <p className="text-lg">"No tengo tiempo para buscar ejercicios ni revisar cómo va su aprendizaje. 😥"</p>
@@ -82,7 +82,7 @@ function HomeComponent() {
       {/* CTA Section */}
       <section className="bg-sky-100 py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-sky-950 mb-8">¡Dale una ventaja a tus hijos hoy mismo!</h2>
+          <h2 className="text-3xl font-bold text-sky-950 mb-8">¡Dales una ventaja académica hoy mismo!</h2>
           <div className="flex flex-wrap gap-4 justify-center mb-12">
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Genera ejercicios en segundos</span>
             <span className="bg-white px-4 py-2 rounded-full text-sky-800">✅ Recupera tu tiempo</span>
