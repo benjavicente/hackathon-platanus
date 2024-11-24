@@ -9,18 +9,6 @@
   --brand-color: var(--color-sky-600);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: large;
-  color: var(--brand-color);
-}
-
 @layer base {
   html,
   body,
@@ -35,5 +23,17 @@ h6 {
     font-family: var(--font-display);
     background: var(--color-sky-100);
     color: var(--color-sky-950);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: large;
+    color: var(--brand-color);
   }
 }

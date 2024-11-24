@@ -15,9 +15,9 @@ function RouteComponent() {
 
   return (
     <>
-      <div className="grow">
-        <h1>{lesson.name}</h1>
-        <p>{JSON.stringify(lesson)}</p>
+      <div className="grow flex flex-col">
+        <h1 className="text-center text-2xl">{lesson.name}</h1>
+        <p className="text-center px-2 my-auto">{lesson.lessonGoalDescription}</p>
       </div>
       <Link
         from={Route.fullPath}

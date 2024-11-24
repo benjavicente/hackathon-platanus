@@ -1,22 +1,27 @@
 import { v } from "convex/values";
 import { action, ActionCtx } from "./_generated/server";
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject, generateText, tool } from "ai";
 import { z } from "zod";
 import * as mathjs from "mathjs";
 
-const orchestratorModel = "us.anthropic.claude-3-5-sonnet-20241022-v2:0";
-const excerciseModel = "anthropic.claude-3-sonnet-20240229-v1:0";
-const explanationModel = "anthropic.claude-3-haiku-20240307-v1:0";
+const orchestratorModel = "";
+const excerciseModel = "";
+const explanationModel = "";
 
 export function getModel(modelString: string) {
-  const model = createAmazonBedrock({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
+  const openai = createOpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    compatibility: "strict", // strict mode, enable when using the OpenAI API
   });
+  // const model = createAmazonBedrock({
+  //   region: process.env.AWS_REGION,
+  //   accessKeyId: process.env.AWS_ACESS_KEY,
+  //   secretAccessKey: process.env.AWS_SECRET_KEY,
+  // });
 
-  return model(modelString);
+  return openai("gpt-4o-mini");
 }
 
 export const explanationSchema = z.object({
@@ -27,9 +32,9 @@ export const exerciseSchema = z.object({
   questions: z.array(
     z.discriminatedUnion("type", [
       z.object({
-        type: z.literal("choice"),
+        type: z.literal("choice").describe("type MUST be choice"),
         question: z.string(),
-        options: z.array(z.string()),
+        options: z.array(z.string()).describe("Must be an array of strings"),
         correctOption: z.number().describe("El index de la opción correcta en el array de opciones."),
       }),
     ]),
@@ -73,22 +78,22 @@ export async function generateLessonPlan({ parentContextDescription }: { parentC
         .describe("Los pasos de la clase."),
     }),
     prompt: `
-      Create a structured mathematics lesson based on the following description provided by a parent: ${parentContextDescription}.
+        Crea una lección estructurada de matemáticas basada en la siguiente descripción proporcionada por un padre: ${parentContextDescription}.
 
-        The lesson should start with an explanation step followed by any number of steps of the following types:
-        - Explanation: Provide instructions for another agent to generate a simple and fun explanation of the topic, personalized based on the child's needs and interests.
-        - Exercises: Provide instructions for another agent to create at least three practice problems tailored to the child's level, integrating elements that match the child's interests and challenges.
+        La lección debe comenzar con un paso (step) de explicación seguido de cualquier número de pasos de los siguientes tipos:
+        - **Explanation:** Debes proporcionar instrucciones para que otro agente genere una explicación simple y divertida del tema, personalizada según las necesidades e intereses del niño.
+        - **Exercise:** Debes proporcionar instrucciones para que otro agente cree al menos tres problemas de práctica adaptados al nivel del niño, integrando elementos que se ajusten a sus intereses y desafíos.
 
-        The output should include:
-        - **lessonGoalDescription:** A clear and concise description of the overall goal of the lesson.
-        - **lessonSteps:** An array of steps, where each step includes:
-          - **stepPrompt:** A concise instructional prompt for another agent to generate the explanation or exercise.
-          - **stepDescription:** Context and detailed guidance for how to approach creating the step content, focusing on tone, style, and relevance.
-          - **stepType:** Indicating whether the step is an "explanation" or an "exercise."
+        El resultado debe incluir:
+        - **lessonGoalDescription:** Una descripción clara y concisa del objetivo general de la lección.
+        - **lessonSteps:** Una lista de pasos, donde cada paso incluye:
+          - **stepPrompt:** Una instrucción concisa para que otro agente genere la explicación (explanation) o el ejercicio (exercise).
+          - **stepDescription:** Contexto y orientación detallada sobre cómo abordar la creación del contenido del paso, centrándose en el tono, el estilo y la relevancia.
+          - **stepType:** Indica si el paso es una "explanation" o un "exercise".
 
-        Focus on ensuring the structure is clear and engaging. The stepPrompt should act as a direct command for another agent, while the stepDescription provides reasoning and guidance for creating the step effectively.
+        Enfócate en garantizar que la estructura sea clara y atractiva. El **stepPrompt** debe actuar como un comando directo para otro agente, mientras que el **stepDescription** proporciona razonamiento y orientación para crear el paso de manera efectiva.
 
-        You MUST ensure content alignment, each step should build on the previous one. Do this by giving the appropriate context and guidance for each step.
+        **Debes garantizar la alineación del contenido**, asegurándote de que cada paso construya sobre el anterior. Logra esto proporcionando el contexto y la orientación adecuados para cada paso.
       `,
   });
 
@@ -112,28 +117,13 @@ export const generateExercise = async ({
       stepDescription +
       stepPrompt +
       `
+      **Example:**
+      - **Question:** ¿Cuánto es 2+2?
+      - **Options:**
+        [2, 10, 4, 5]
 
-    **Example:**
-    - **Question:** What is 2 + 2?
-    - **Options:**
-      [2, 10, 4, 5]
-
-    - **Correct Option:** 3
-
-
-
+      - **Correct Option:** 3
     `,
-    tools: {
-      calculate: tool({
-        description:
-          "A tool for evaluating mathematical expressions. " +
-          "Example expressions: " +
-          "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
-        parameters: z.object({ expression: z.string() }),
-        execute: async ({ expression }) => mathjs.evaluate(expression),
-      }),
-    },
-    toolChoice: "required",
   });
 
   if (!object) throw Error("No object in result");
